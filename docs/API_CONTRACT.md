@@ -171,12 +171,15 @@ Multiple files are uploaded as multiple requests (the client queues them).
 |---|---|
 | `DOWNLOAD` (any type) | `Content-Type: application/octet-stream`, `Content-Disposition: attachment; filename*=UTF-8''<sanitized>` |
 | `PREVIEW` image / text (non-SVG, non-HTML) | `Content-Type: <detected>`, `Content-Disposition: inline; filename*=…` |
-| `PREVIEW` PDF | as above; CSP strategy pending ([ADR-001 §6](DECISIONS/ADR-001-architecture.md#6-open-items)) |
+| `PREVIEW` PDF | as above, but CSP is only `frame-ancestors 'self'` so the browser's built-in PDF viewer works (ADR-001 §6, item 3) |
+| `PREVIEW` text | always `text/plain;charset=UTF-8` (CSV/Markdown included), so it can never render as HTML |
 | all | `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `Cache-Control: private, no-store`, `Content-Security-Policy` (see SECURITY_GUIDELINES §7), `Content-Length` |
 
-Previewable allowlist: `image/png`, `image/jpeg`, `image/gif`, `image/webp`, `text/plain`, and
-`application/pdf` **once the PDF strategy is decided** (until then PDFs are `attachment` only and
-`previewable=false`). SVG, HTML, and everything else are `attachment` only.
+Previewable allowlist: `image/png`, `image/jpeg`, `image/gif`, `image/webp`, `text/plain`,
+`text/csv`, `text/markdown` and `application/pdf`. SVG, HTML, and everything else are `attachment` only.
+`FileSummary`/`FileDetail.previewable` tells the client whether a preview link can be requested.
+Requesting a link counts as one access: it records a `DOWNLOADED`/`PREVIEWED` event and updates
+`lastAccessedAt` without changing the file version.
 
 ## 4. Error model
 

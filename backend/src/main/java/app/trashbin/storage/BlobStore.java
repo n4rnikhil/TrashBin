@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.core.io.Resource;
 
 /**
  * Port for binary storage. Blobs are addressed only by a server-generated UUID storage key; user
@@ -26,6 +27,9 @@ public interface BlobStore {
     void discard(StagedBlob staged);
 
     InputStream open(UUID storageKey);
+
+    /** Random-access view of a blob, used to serve HTTP Range requests. */
+    Resource resource(UUID storageKey);
 
     boolean exists(UUID storageKey);
 

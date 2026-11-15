@@ -371,6 +371,43 @@
         }
       }
     },
+    "/api/v1/files/{id}/access-tickets" : {
+      "post" : {
+        "tags" : [ "content-controller" ],
+        "operationId" : "createTicket",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TicketRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccessTicket"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/collections" : {
       "get" : {
         "tags" : [ "collection-controller" ],
@@ -835,6 +872,40 @@
         }
       }
     },
+    "/api/v1/content/{ticket}" : {
+      "get" : {
+        "tags" : [ "content-controller" ],
+        "operationId" : "content",
+        "parameters" : [ {
+          "name" : "ticket",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/me/sessions/{sessionId}" : {
       "delete" : {
         "tags" : [ "account-security-controller" ],
@@ -914,6 +985,9 @@
             "type" : "string"
           },
           "favorite" : {
+            "type" : "boolean"
+          },
+          "previewable" : {
             "type" : "boolean"
           },
           "notes" : {
@@ -1104,6 +1178,28 @@
           },
           "allowDuplicate" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "TicketRequest" : {
+        "type" : "object",
+        "properties" : {
+          "purpose" : {
+            "type" : "string",
+            "enum" : [ "DOWNLOAD", "PREVIEW" ]
+          }
+        },
+        "required" : [ "purpose" ]
+      },
+      "AccessTicket" : {
+        "type" : "object",
+        "properties" : {
+          "url" : {
+            "type" : "string"
+          },
+          "expiresAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
@@ -1357,6 +1453,9 @@
             "type" : "string"
           },
           "favorite" : {
+            "type" : "boolean"
+          },
+          "previewable" : {
             "type" : "boolean"
           },
           "archivedAt" : {

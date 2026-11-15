@@ -1,6 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 import type {
+  AccessTicket,
   FileDetail,
+  TicketPurpose,
   FileSummary,
   PageResponse,
   TypeGroup,
@@ -76,6 +78,21 @@ export const filesApi = {
       body: { collectionIds },
     }),
 
+  /** Asks for a short-lived download or preview link (counts as one access). */
+  createTicket: (id: string, purpose: TicketPurpose) =>
+    apiFetch<AccessTicket>(`${fileUrl(id)}/access-tickets`, {
+      method: "POST",
+      body: { purpose },
+    }),
+
+  /** Reads a text preview through its link, keeping at most `maxChars` characters. */
+  fetchText: async (url: string, maxChars: number, signal?: AbortSignal) => {
+    const response = await fetch(url, { cache: "no-store", ...(signal ? { signal } : {}) });
+    if (!response.ok) throw new Error(`Preview failed (${response.status})`);
+    const text = await response.text();
+    return { text: text.slice(0, maxChars), truncated: text.length > maxChars };
+  },
+
   setFavorite: (id: string, favorite: boolean) =>
     apiFetch<FileDetail>(`${fileUrl(id)}/favorite`, { method: "PUT", body: { favorite } }),
 };
@@ -85,4 +102,5 @@ export const fileKeys = {
   lists: ["files", "list"] as const,
   list: (params: ListFilesParams) => ["files", "list", params] as const,
   detail: (id: string) => ["files", "detail", id] as const,
+  preview: (id: string) => ["files", "preview", id] as const,
 };

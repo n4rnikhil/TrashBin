@@ -2,11 +2,13 @@ package app.trashbin.archive.repository;
 
 import app.trashbin.archive.domain.ArchivedFile;
 import app.trashbin.common.persistence.OwnedEntityRepository;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,6 +30,17 @@ public interface ArchivedFileRepository
     long sumSizeByOwnerId(@Param("ownerId") UUID ownerId);
 
     boolean existsByStorageKey(UUID storageKey);
+
+    /**
+     * Records an access without touching the version (a bulk update bypasses optimistic locking),
+     * so opening a file never makes someone's pending edit conflict.
+     */
+    @Modifying
+    @Query(
+            "update ArchivedFile f set f.lastAccessedAt = :now"
+                    + " where f.id = :id and f.ownerId = :ownerId")
+    int markAccessed(
+            @Param("id") UUID id, @Param("ownerId") UUID ownerId, @Param("now") Instant now);
 
     @Query(
             "select new app.trashbin.archive.repository.StorageRef(f.id, f.storageKey)"

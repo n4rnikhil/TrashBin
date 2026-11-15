@@ -18,6 +18,9 @@ trashbin:
     rate-limit-per-minute: 100000
     bcrypt-cost: 4
     bootstrap-admin-email: admin@example.com
+  content:
+    # Test-only key (Base64), deliberately different from the JWT test key.
+    ticket-secret: dGVzdC1vbmx5LXRpY2tldC1rZXktLWRpZmZlcmVudC1mcm9tLXRoZS1qd3Qta2V5IQ==
   upload:
     max-file-size: 1MB
     user-quota: 3MB

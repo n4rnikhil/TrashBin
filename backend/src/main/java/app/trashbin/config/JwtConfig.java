@@ -1,9 +1,9 @@
 package app.trashbin.config;
 
+import app.trashbin.common.security.Secrets;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import java.time.Clock;
 import java.time.Duration;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
@@ -29,22 +29,12 @@ public class JwtConfig {
 
     public static final String ISSUER = "trashbin";
     public static final String AUDIENCE = "trashbin-api";
-    private static final int MIN_KEY_BYTES = 32;
 
     /** Fails startup on a missing, malformed or weak secret instead of running insecurely. */
     @Bean
     SecretKey jwtSecretKey(AuthProperties properties) {
-        byte[] key;
-        try {
-            key = Base64.getDecoder().decode(properties.jwtSecret().trim());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("TRASHBIN_JWT_SECRET must be Base64-encoded", e);
-        }
-        if (key.length < MIN_KEY_BYTES) {
-            throw new IllegalStateException(
-                    "TRASHBIN_JWT_SECRET must decode to at least " + MIN_KEY_BYTES + " bytes");
-        }
-        return new SecretKeySpec(key, "HmacSHA256");
+        return new SecretKeySpec(
+                Secrets.decodeKey(properties.jwtSecret(), "TRASHBIN_JWT_SECRET"), "HmacSHA256");
     }
 
     @Bean

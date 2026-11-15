@@ -15,9 +15,11 @@ import { Heading, Text } from "@/components/ui/typography";
 import { ApiError, errorMessage } from "@/lib/api/errors";
 import { fileKeys, filesApi } from "../api/files-api";
 import { formatBytes, formatCalendarDate, formatDateTime } from "../format";
+import { DownloadButton } from "./download-button";
 import { EditFileDialog } from "./edit-file-dialog";
 import { FavoriteButton } from "./favorite-button";
 import { FileCollectionsCard } from "./file-collections-card";
+import { FilePreview } from "./file-preview";
 import { FileTagsCard } from "./file-tags-card";
 import { FileTypeIcon, TYPE_LABELS } from "./file-type-icon";
 
@@ -43,7 +45,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/** One file: metadata, notes, tags and favorite. Download and preview arrive in M4. */
+/** One file: download, preview, metadata, notes, tags, collections and favorite. */
 export function FileDetailView() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -98,7 +100,8 @@ export function FileDetailView() {
             <Badge variant="outline">{formatBytes(f.sizeBytes)}</Badge>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <DownloadButton fileId={f.id} />
           <FavoriteButton fileId={f.id} favorite={f.favorite} />
           <Button variant="outline" onClick={() => setEditing(true)}>
             <Pencil aria-hidden /> Edit details
@@ -106,6 +109,8 @@ export function FileDetailView() {
         </div>
       </header>
       <EditFileDialog file={f} open={editing} onOpenChange={setEditing} />
+
+      {f.previewable ? <FilePreview file={f} /> : null}
 
       <FileTagsCard file={f} />
       <FileCollectionsCard file={f} />

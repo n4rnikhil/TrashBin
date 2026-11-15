@@ -33,6 +33,7 @@ const summary: FileSummary = {
   sizeBytes: 1536,
   status: "ARCHIVED",
   favorite: false,
+  previewable: false,
   archivedAt: "2026-11-15T10:00:00Z",
   originDate: null,
   tags: [{ id: TAG, name: "housing", color: "#4F46E5" }],

@@ -42,6 +42,10 @@ export type UpdateTagRequest = Schemas["UpdateTagRequest"];
 /** Partial edit: omitted fields stay, "" clears notes/contextNote/originDate. */
 export type UpdateFileRequest = Schemas["UpdateFileRequest"];
 
+/** A short-lived link to a file's bytes; `url` is relative to this site. */
+export type AccessTicket = Required<Schemas["AccessTicket"]>;
+export type TicketPurpose = "DOWNLOAD" | "PREVIEW";
+
 export type CollectionRef = Required<Schemas["CollectionRef"]>;
 export type CollectionSummary = Nullable<Required<Schemas["CollectionSummary"]>, "description">;
 export type CreateCollectionRequest = Schemas["CreateCollectionRequest"];

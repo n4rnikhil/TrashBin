@@ -1,6 +1,7 @@
 package app.trashbin.archive.mapper;
 
 import app.trashbin.archive.domain.ArchivedFile;
+import app.trashbin.archive.domain.Previews;
 import app.trashbin.archive.dto.FileDetail;
 import app.trashbin.archive.dto.FileSummary;
 import app.trashbin.collection.dto.CollectionDtos.CollectionRef;
@@ -20,6 +21,7 @@ public final class FileMapper {
                 f.getSizeBytes(),
                 f.getStatus().name(),
                 f.isFavorite(),
+                Previews.isPreviewable(f.getMediaType()),
                 f.getArchivedAt(),
                 f.getOriginDate(),
                 List.copyOf(tags));
@@ -37,6 +39,7 @@ public final class FileMapper {
                 f.getSha256(),
                 f.getStatus().name(),
                 f.isFavorite(),
+                Previews.isPreviewable(f.getMediaType()),
                 f.getNotes(),
                 f.getContextNote(),
                 f.getOriginDate(),

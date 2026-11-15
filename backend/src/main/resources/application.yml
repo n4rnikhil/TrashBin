@@ -52,6 +52,10 @@ springdoc:
 trashbin:
   storage:
     root: ${TRASHBIN_STORAGE_ROOT}
+  content:
+    ticket-secret: ${TRASHBIN_TICKET_SECRET}
+    download-ticket-ttl: ${TRASHBIN_DOWNLOAD_TICKET_TTL:PT60S}
+    preview-ticket-ttl: ${TRASHBIN_PREVIEW_TICKET_TTL:PT5M}
   upload:
     max-file-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
     user-quota: ${TRASHBIN_USER_QUOTA_GB:5}GB

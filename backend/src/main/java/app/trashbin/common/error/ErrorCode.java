@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Session expired"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
     REGISTRATION_DISABLED(HttpStatus.FORBIDDEN, "Registration disabled"),
+    TICKET_INVALID(HttpStatus.FORBIDDEN, "Link invalid or expired"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Not found"),
     EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "Email already registered"),
     DUPLICATE_FILE(HttpStatus.CONFLICT, "Duplicate file"),

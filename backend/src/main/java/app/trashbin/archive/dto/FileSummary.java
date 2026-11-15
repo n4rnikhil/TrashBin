@@ -18,6 +18,7 @@ public record FileSummary(
         long sizeBytes,
         String status,
         boolean favorite,
+        boolean previewable,
         Instant archivedAt,
         LocalDate originDate,
         List<TagRef> tags) {}

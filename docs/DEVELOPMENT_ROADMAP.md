@@ -137,6 +137,9 @@ full-text search, filters). **Both done.** Measured: search p95 146–279 ms at 
 
 ## M4 — Retrieve
 
+Delivered in two parts: **M4a** (signed download/preview links, Range support, preview UI — done)
+and **M4b** (Tika text extraction and content search).
+
 **Goal:** get files back safely. Requirements: FR-V2, FR-V3, FR-F5, FR-O3 (content search).
 
 **Scope**

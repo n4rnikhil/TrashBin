@@ -45,6 +45,9 @@ public class SecurityConfig {
                                                 "/api/v1/auth/refresh",
                                                 "/api/v1/auth/logout")
                                         .permitAll()
+                                        // Authenticated by the signed ticket in the path instead.
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/content/**")
+                                        .permitAll()
                                         .requestMatchers(
                                                 "/api/v1/health",
                                                 "/actuator/health",
@@ -74,7 +77,11 @@ public class SecurityConfig {
                 .addFilterBefore(
                         new AuthRateLimitFilter(rateLimiter, problems),
                         BearerTokenAuthenticationFilter.class)
-                .headers(h -> h.referrerPolicy(r -> r.policy(ReferrerPolicy.NO_REFERRER)));
+                .headers(
+                        h ->
+                                h.referrerPolicy(r -> r.policy(ReferrerPolicy.NO_REFERRER))
+                                        // Previews are framed by our own pages (same origin).
+                                        .frameOptions(f -> f.sameOrigin()));
         return http.build();
     }
 

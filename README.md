@@ -8,7 +8,8 @@ tags and context, so you can search, preview, download, restore and rediscover t
 
 **Project status:** `M3 — organize and search` complete. Accounts, sessions, uploads (signature, duplicate
 and quota checks), the archive, file details, tags, collections, favorites, metadata editing and
-full-text search with filters work end to end. Download and preview arrive in M4. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
+full-text search with filters, download and inline preview (images, text, PDF) work end to end.
+Searching inside document contents arrives in M4b. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 
 ---
 

@@ -166,9 +166,11 @@ Rules:
   no-store`, `Content-Disposition` with an RFC 6266 `filename*` value whose input has CR/LF/control
   characters removed.
 - Content responses carry a restrictive CSP (`default-src 'none'; sandbox`) and are embeddable only
-  by this origin (`frame-ancestors 'self'`). The **PDF exception**: browser-native PDF viewers do not
-  work inside a CSP `sandbox`. The PDF preview strategy is an open item decided in M4
-  ([ADR-001 §6](DECISIONS/ADR-001-architecture.md#6-open-items)); until then PDFs are download-only.
+  by this origin (`frame-ancestors 'self'`, plus `X-Frame-Options: SAMEORIGIN`). The **PDF
+  exception** (decided in M4): browser-native PDF viewers do not work inside a CSP `sandbox`, so PDF
+  previews are sent with only `frame-ancestors 'self'`. The content is still `application/pdf` with
+  `nosniff`, so it cannot be reinterpreted as HTML, and the browser's PDF viewer runs isolated from
+  the app. Text previews are fetched and rendered as text by the app, never framed.
 - Application pages: strict CSP (nonce-based scripts, `frame-ancestors 'none'`, `object-src 'none'`,
   `base-uri 'self'`), `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`,
   `Permissions-Policy` minimal, HSTS when served over HTTPS. Development may relax script rules for

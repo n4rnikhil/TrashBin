@@ -18,6 +18,7 @@ public record FileDetail(
         String sha256,
         String status,
         boolean favorite,
+        boolean previewable,
         String notes,
         String contextNote,
         LocalDate originDate,

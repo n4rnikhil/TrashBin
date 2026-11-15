@@ -21,6 +21,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -99,6 +101,15 @@ public class LocalFsBlobStore implements BlobStore {
         } catch (IOException e) {
             throw new UncheckedIOException("Could not open blob", e);
         }
+    }
+
+    @Override
+    public Resource resource(UUID storageKey) {
+        Path path = pathFor(storageKey);
+        if (Files.isSymbolicLink(path)) {
+            throw new IllegalStateException("Blob path is a symbolic link");
+        }
+        return new FileSystemResource(path);
     }
 
     @Override

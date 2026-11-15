@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/files/{id}/access-tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createTicket"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/collections": {
         parameters: {
             query?: never;
@@ -324,6 +340,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/content/{ticket}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["content"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/me/sessions/{sessionId}": {
         parameters: {
             query?: never;
@@ -364,6 +396,7 @@ export interface components {
             sha256?: string;
             status?: string;
             favorite?: boolean;
+            previewable?: boolean;
             notes?: string;
             contextNote?: string;
             /** Format: date */
@@ -424,6 +457,15 @@ export interface components {
             tags?: string[];
             collectionIds?: string[];
             allowDuplicate?: boolean;
+        };
+        TicketRequest: {
+            /** @enum {string} */
+            purpose: "DOWNLOAD" | "PREVIEW";
+        };
+        AccessTicket: {
+            url?: string;
+            /** Format: date-time */
+            expiresAt?: string;
         };
         CreateCollectionRequest: {
             name: string;
@@ -512,6 +554,7 @@ export interface components {
             sizeBytes?: number;
             status?: string;
             favorite?: boolean;
+            previewable?: boolean;
             /** Format: date-time */
             archivedAt?: string;
             /** Format: date */
@@ -764,6 +807,32 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    createTicket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TicketRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessTicket"];
                 };
             };
         };
@@ -1184,6 +1253,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    content: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                ticket: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
                 };
             };
         };
