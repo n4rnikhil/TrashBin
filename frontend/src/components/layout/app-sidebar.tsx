@@ -65,9 +65,10 @@ export function AppSidebar() {
         <Link
           href="/dashboard"
           className="rounded-lg p-1 transition-opacity group-data-[collapsible=icon]:p-0 hover:opacity-90"
-          aria-label="Trash Bin home"
         >
+          {/* Name = visible brand text + "Home", so it always contains what is on screen. */}
           <BrandLockup className="group-data-[collapsible=icon]:[&>span:last-child]:hidden" />
+          <span className="sr-only">Home</span>
         </Link>
       </SidebarHeader>
 

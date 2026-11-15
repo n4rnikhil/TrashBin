@@ -51,7 +51,7 @@ export function FileCollectionsCard({ file }: { file: FileDetail }) {
         ) : !collections.data?.length ? (
           <Text tone="muted">
             No collections yet.{" "}
-            <Link href="/collections" className="text-primary underline-offset-4 hover:underline">
+            <Link href="/collections" className="text-primary underline underline-offset-4">
               Create one
             </Link>{" "}
             to group related files.

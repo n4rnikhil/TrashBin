@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   Design tokens — Trash Bin
+   Design tokens â€” Trash Bin
    Off-white canvas, white surfaces, indigo accent, slate typography.
    Colors are OKLCH (Tailwind palette values noted for reference).
    ========================================================================== */
@@ -29,16 +29,17 @@
   --secondary: oklch(0.968 0.007 247.896); /* slate-100 */
   --secondary-foreground: oklch(0.279 0.041 260.031); /* slate-800 */
   --muted: oklch(0.968 0.007 247.896); /* slate-100 */
-  --muted-foreground: oklch(0.554 0.046 257.417); /* slate-500 */
-  --subtle-foreground: oklch(0.704 0.04 256.788); /* slate-400: placeholders, meta */
+  --muted-foreground: oklch(0.5 0.046 257.417); /* slate-500, darkened for AA on the sidebar */
+  /* Meta text. slate-400 failed WCAG AA (2.6:1); this keeps â‰¥ 4.5:1 on every surface. */
+  --subtle-foreground: oklch(0.52 0.042 257);
   --border: oklch(0.929 0.013 255.508); /* slate-200 */
   --input: oklch(0.869 0.022 252.894); /* slate-300: form controls need more contrast */
   --ring: oklch(0.585 0.233 277.117); /* indigo-500 */
 
   /* Status */
-  --destructive: oklch(0.577 0.245 27.325); /* red-600 */
-  --success: oklch(0.596 0.145 163.225); /* emerald-600 */
-  --warning: oklch(0.666 0.179 58.318); /* amber-600 */
+  --destructive: oklch(0.46 0.185 27); /* red-700/800: AA as text on tinted surfaces */
+  --success: oklch(0.47 0.105 166); /* emerald-700/800: AA as text on tinted badges */
+  --warning: oklch(0.473 0.137 46.201); /* amber-800: AA as text on tinted badges */
   --info: oklch(0.546 0.245 262.881); /* blue-600 */
 
   /* Data visualization (reserved) */

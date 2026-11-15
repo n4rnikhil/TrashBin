@@ -4,3 +4,5 @@ coverage
 package-lock.json
 src/lib/api/generated
 next-env.d.ts
+test-results
+playwright-report

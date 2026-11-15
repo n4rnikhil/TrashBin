@@ -40,7 +40,8 @@ export function UserMenu() {
             variant="ghost"
             size="icon"
             className="rounded-full"
-            aria-label={`Account menu for ${user.displayName}`}
+            // Starts with the visible initials so voice control ("click E U") matches the name.
+            aria-label={`${initials(user.displayName)}: Account menu for ${user.displayName}`}
           />
         }
       >

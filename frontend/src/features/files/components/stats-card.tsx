@@ -40,15 +40,17 @@ export function StatsCard() {
   );
 }
 
+/** A `<div>` group keeps the `<dl>` valid; the label link stretches over the whole tile. */
 function Stat({ label, value, href }: { label: string; value: number; href: string }) {
   return (
-    <Link
-      href={href}
-      className="bg-secondary/50 hover:bg-secondary flex flex-col rounded-lg px-3 py-2 transition-colors"
-    >
-      <dt className="text-muted-foreground text-xs">{label}</dt>
+    <div className="bg-secondary/50 hover:bg-secondary relative flex flex-col rounded-lg px-3 py-2 transition-colors">
+      <dt className="text-muted-foreground text-xs">
+        <Link href={href} className="after:absolute after:inset-0 after:rounded-lg">
+          {label}
+        </Link>
+      </dt>
       <dd className="text-xl font-semibold tabular-nums">{value.toLocaleString()}</dd>
-    </Link>
+    </div>
   );
 }
 

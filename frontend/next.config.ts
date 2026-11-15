@@ -5,8 +5,8 @@ import { parseServerEnv } from "./src/lib/config/env";
 const { BACKEND_URL } = parseServerEnv(process.env);
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
+  // No Cache Components / partial prerendering: they cannot carry the per-request CSP nonce
+  // (src/proxy.ts), and authenticated pages render client-side anyway.
   turbopack: {
     // Pin the workspace root so a stray lockfile in a parent folder is never picked up.
     root: process.cwd(),
@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${BACKEND_URL}/api/:path*` }];
   },
-  // Baseline headers for pages. The nonce-based script CSP is added with authentication (M1).
+  // Baseline headers for pages. The nonce-based CSP is set per request in src/proxy.ts.
   async headers() {
     return [
       {
@@ -32,10 +32,6 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "no-referrer" },
-          {
-            key: "Content-Security-Policy",
-            value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
-          },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
       },
