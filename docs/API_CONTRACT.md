@@ -61,7 +61,8 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 | Method & path | Auth | MS | Description | Success | Notable errors |
 |---|---|---|---|---|---|
 | `POST /files` | B | M2 | Multipart upload (§3.1). | 201 `FileDetail` | 400, 409 `DUPLICATE_FILE`, 413 `FILE_TOO_LARGE`, 413 `QUOTA_EXCEEDED`, 415 `UNSUPPORTED_MEDIA_TYPE`, 422 `FILE_SIGNATURE_MISMATCH` |
-| `GET /files` | B | M2/M3 | List (M2: `status`, `page`, `size`, `sort`); search and filters (§3.2) arrive in M3. | 200 `PageResponse<FileSummary>` | 400 |
+| `GET /files` | B | M2/M3 | List, full-text search and filters (§3.2). | 200 `PageResponse<FileSummary>` | 400 |
+| `PUT /files/{id}/collections` | B | M3 | Body `{ "collectionIds": ["…"] }` (≤ 50): the complete set of collections for this file. Foreign or unknown collection ids → 404. | 200 `FileDetail` | 400, 404 |
 | `GET /files/{id}` | B | M2 | Detail. Includes `ETag`. | 200 `FileDetail` | 404 |
 | `PATCH /files/{id}` | B | M3 | Edit `displayName`, `notes`, `contextNote`, `originDate` (allowed in both statuses). Omitted fields stay; `""` clears notes, context and origin date. Requires `If-Match: "<version>"`. | 200 `FileDetail` + `ETag` | 400, 404, 412 `VERSION_CONFLICT`, 428 `PRECONDITION_REQUIRED` |
 | `PUT /files/{id}/favorite` | B | M3 | Body `{ "favorite": true }`. Idempotent; no `If-Match` needed. | 200 `FileDetail` | 400, 404 |
@@ -88,7 +89,7 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 | `GET /collections/{id}` | B | M3 | Detail. | 200 `CollectionSummary` |
 | `PATCH /collections/{id}` | B | M3 | Rename / describe. | 200 `CollectionSummary` |
 | `DELETE /collections/{id}` | B | M3 | Delete the collection only (files untouched). | 204 |
-| `PUT /collections/{id}/files` | B | M3 | Replace membership: `{ "fileIds": ["…"] }`; all must be owned. | 200 `CollectionSummary` |
+| *(membership)* | — | M3 | Managed per file via `PUT /files/{id}/collections` (changed from the originally planned `PUT /collections/{id}/files`; the file side owns the ownership check). Filter a collection's files with `GET /files?collection=…`. | — |
 | `GET /rediscover?mode=` | B | M5 | `on-this-day`, `forgotten`, `random`. | 200 `FileSummary[]` |
 | `GET /stats` | B | M5 | Counts, bytes used, quota. | 200 `Stats` |
 
@@ -153,7 +154,7 @@ Multiple files are uploaded as multiple requests (the client queues them).
 | `typeGroup` | enum | `IMAGE DOCUMENT SPREADSHEET PRESENTATION TEXT AUDIO VIDEO ARCHIVE OTHER` |
 | `favorite` | boolean | |
 | `from`, `to` | date | Range over `archivedAt`. |
-| `sort` | whitelist | `archivedAt`, `displayName`, `sizeBytes`, `lastAccessedAt`; `relevance` only with `q`. Default `archivedAt,desc`. |
+| `sort` | whitelist | `archivedAt`, `displayName`, `sizeBytes`, `lastAccessedAt` with `,asc`/`,desc`; `relevance` only with `q`. Default: `relevance` when `q` is given, else `archivedAt,desc`. |
 | `page`, `size` | int | See conventions. |
 
 ### 3.3 Content — `GET /content/{ticket}`
@@ -212,6 +213,7 @@ paths, or secrets.
 | `VERSION_CONFLICT` | 412 | `If-Match` does not match current version. |
 | `PRECONDITION_REQUIRED` | 428 | An edit was sent without `If-Match`. |
 | `TAG_ALREADY_EXISTS` | 409 | A tag with this name (case-insensitive) already exists. |
+| `COLLECTION_ALREADY_EXISTS` | 409 | A collection with this name (case-insensitive) already exists. |
 | `FILE_TOO_LARGE` | 413 | Over the size limit. |
 | `QUOTA_EXCEEDED` | 413 | Would exceed the user's quota. |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | Blocked by policy/denylist, or preview not available for the type. |
@@ -223,9 +225,9 @@ paths, or secrets.
 
 Request and response DTOs are immutable Java records; entities are never serialized. Representative
 shapes (full schemas live in the OpenAPI snapshot). Example values are fictional. Fields are added in the
-milestone that implements them: `tags` and `favorite` are live since M3a; `collections`, `previewable`
-and `extractionStatus` are not part of the responses yet. Upload metadata accepts `tags` (M3a);
-`collectionIds` arrives with M3b. `GET /files` accepts `favorite=true|false` since M3a.
+milestone that implements them: `tags`, `favorite` (M3a) and `FileDetail.collections` (M3b) are
+live; `previewable` and `extractionStatus` arrive with M4. Upload metadata accepts `tags` and
+`collectionIds`. Date filters `from`/`to` are inclusive calendar dates in UTC.
 
 ```jsonc
 // RegisterRequest

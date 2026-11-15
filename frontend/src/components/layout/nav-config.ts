@@ -28,13 +28,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { title: "Overview", href: "/dashboard", icon: LayoutDashboard, status: "available" },
       { title: "Archive", href: "/archive", icon: Archive, status: "available" },
-      {
-        title: "Collections",
-        href: "/collections",
-        icon: Library,
-        status: "planned",
-        milestone: "M3",
-      },
+      { title: "Collections", href: "/collections", icon: Library, status: "available" },
       { title: "Tags", href: "/tags", icon: Tags, status: "available" },
       {
         title: "Rediscover",

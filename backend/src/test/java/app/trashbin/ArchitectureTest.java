@@ -76,6 +76,16 @@ class ArchitectureTest {
                     .dependOnClassesThat()
                     .resideInAPackage("app.trashbin.archive..");
 
+    /** Collections, like tags, are a building block of the archive (no cycles). */
+    @ArchTest
+    static final ArchRule collectionsDoNotDependOnTheArchive =
+            noClasses()
+                    .that()
+                    .resideInAPackage("app.trashbin.collection..")
+                    .should()
+                    .dependOnClassesThat()
+                    .resideInAPackage("app.trashbin.archive..");
+
     /** Storage must not know about the modules that use it (they implement StorageCatalog). */
     @ArchTest
     static final ArchRule storageDoesNotDependOnFeatureModules =

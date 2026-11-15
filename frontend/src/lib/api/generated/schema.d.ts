@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/files/{id}/collections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["replaceCollections"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/me/password": {
         parameters: {
             query?: never;
@@ -94,6 +110,22 @@ export interface paths {
         get: operations["list_1"];
         put?: never;
         post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/collections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_2"];
+        put?: never;
+        post: operations["create_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -244,6 +276,22 @@ export interface paths {
         patch: operations["update_2"];
         trace?: never;
     };
+    "/api/v1/collections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_1"];
+        put?: never;
+        post?: never;
+        delete: operations["delete_1"];
+        options?: never;
+        head?: never;
+        patch: operations["update_3"];
+        trace?: never;
+    };
     "/api/v1/users/me/sessions": {
         parameters: {
             query?: never;
@@ -299,6 +347,11 @@ export interface components {
         ReplaceTagsRequest: {
             tags: string[];
         };
+        CollectionRef: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+        };
         FileDetail: {
             /** Format: uuid */
             id?: string;
@@ -316,6 +369,7 @@ export interface components {
             /** Format: date */
             originDate?: string;
             tags?: components["schemas"]["TagRef"][];
+            collections?: components["schemas"]["CollectionRef"][];
             /** Format: date-time */
             archivedAt?: string;
             /** Format: date-time */
@@ -337,6 +391,9 @@ export interface components {
         };
         FavoriteRequest: {
             favorite: boolean;
+        };
+        ReplaceCollectionsRequest: {
+            collectionIds: string[];
         };
         ChangePasswordRequest: {
             currentPassword: string;
@@ -365,7 +422,22 @@ export interface components {
             /** Format: date */
             originDate?: string;
             tags?: string[];
+            collectionIds?: string[];
             allowDuplicate?: boolean;
+        };
+        CreateCollectionRequest: {
+            name: string;
+            description?: string;
+        };
+        CollectionSummary: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            description?: string;
+            /** Format: int64 */
+            fileCount?: number;
+            /** Format: date-time */
+            updatedAt?: string;
         };
         RegisterRequest: {
             /** Format: email */
@@ -410,6 +482,10 @@ export interface components {
             notes?: string;
             contextNote?: string;
             originDate?: string;
+        };
+        UpdateCollectionRequest: {
+            name?: string;
+            description?: string;
         };
         SessionInfo: {
             /** Format: uuid */
@@ -500,6 +576,32 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["FavoriteRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    replaceCollections: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplaceCollectionsRequest"];
             };
         };
         responses: {
@@ -609,11 +711,17 @@ export interface operations {
     list_1: {
         parameters: {
             query?: {
+                q?: string;
                 status?: string;
                 favorite?: boolean;
+                typeGroup?: string;
+                tag?: string[];
+                collection?: string;
+                from?: string;
+                to?: string;
+                sort?: string;
                 page?: number;
                 size?: number;
-                sort?: string;
             };
             header?: never;
             path?: never;
@@ -656,6 +764,50 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    list_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CollectionSummary"][];
+                };
+            };
+        };
+    };
+    create_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCollectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CollectionSummary"];
                 };
             };
         };
@@ -924,6 +1076,74 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CollectionSummary"];
+                };
+            };
+        };
+    };
+    delete_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    update_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCollectionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CollectionSummary"];
                 };
             };
         };

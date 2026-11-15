@@ -1,5 +1,6 @@
 package app.trashbin.archive.dto;
 
+import app.trashbin.collection.dto.CollectionDtos.CollectionRef;
 import app.trashbin.tag.dto.TagDtos.TagRef;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public record FileDetail(
         String contextNote,
         LocalDate originDate,
         List<TagRef> tags,
+        List<CollectionRef> collections,
         Instant archivedAt,
         Instant lastAccessedAt,
         Instant discardedAt,

@@ -13,7 +13,14 @@ describe("nav-config", () => {
     const items = NAV_GROUPS.flatMap((group) => group.items);
     const available = items.filter((item) => item.status === "available").map((i) => i.href);
     // Only routes that really exist may be navigable.
-    expect(available).toEqual(["/dashboard", "/archive", "/tags", "/status", "/settings"]);
+    expect(available).toEqual([
+      "/dashboard",
+      "/archive",
+      "/collections",
+      "/tags",
+      "/status",
+      "/settings",
+    ]);
     for (const item of items) {
       if (item.status === "planned") expect(item.milestone).toMatch(/^M\d$/);
     }

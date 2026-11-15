@@ -17,6 +17,7 @@ import { fileKeys, filesApi } from "../api/files-api";
 import { formatBytes, formatCalendarDate, formatDateTime } from "../format";
 import { EditFileDialog } from "./edit-file-dialog";
 import { FavoriteButton } from "./favorite-button";
+import { FileCollectionsCard } from "./file-collections-card";
 import { FileTagsCard } from "./file-tags-card";
 import { FileTypeIcon, TYPE_LABELS } from "./file-type-icon";
 
@@ -107,6 +108,7 @@ export function FileDetailView() {
       <EditFileDialog file={f} open={editing} onOpenChange={setEditing} />
 
       <FileTagsCard file={f} />
+      <FileCollectionsCard file={f} />
 
       {f.contextNote || f.notes ? (
         <Card>

@@ -46,6 +46,8 @@ through Flyway without superuser rights.
 | 2 | `V2__users_and_refresh_tokens.sql` | M1 | Accounts and refresh-token sessions |
 | 3 | `V3__archived_files_and_events.sql` | M2 | Archived files, extracted text, activity events |
 | 4 | `V4__tags.sql` | M3a | Tags, file/tag links with composite FKs, favorite index |
+| 5 | `V5__collections.sql` | M3b | Collections and membership with composite FKs |
+| 6 | `V6__search.sql` | M3b | Search vector function, backfill, full-text and trigram indexes |
 
 Planned: see [DATABASE_DESIGN §8](../docs/DATABASE_DESIGN.md#8-migration-rules).
 

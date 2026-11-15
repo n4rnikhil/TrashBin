@@ -2,8 +2,10 @@ package app.trashbin.archive.web;
 
 import app.trashbin.archive.dto.FileDetail;
 import app.trashbin.archive.dto.FileEditRequests.FavoriteRequest;
+import app.trashbin.archive.dto.FileEditRequests.ReplaceCollectionsRequest;
 import app.trashbin.archive.dto.FileEditRequests.ReplaceTagsRequest;
 import app.trashbin.archive.dto.FileEditRequests.UpdateFileRequest;
+import app.trashbin.archive.dto.FileListQuery;
 import app.trashbin.archive.dto.FileSummary;
 import app.trashbin.archive.dto.IncomingFile;
 import app.trashbin.archive.dto.UploadMetadata;
@@ -17,9 +19,12 @@ import app.trashbin.common.security.AuthenticatedUser;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -70,15 +75,37 @@ public class FileController {
         return uploads.upload(AuthenticatedUser.from(jwt), incoming, metadata);
     }
 
+    /** List, search and filter (docs/API_CONTRACT.md 3.2). */
     @GetMapping
     public PageResponse<FileSummary> list(
             @AuthenticationPrincipal Jwt jwt,
+            @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "ARCHIVED") String status,
             @RequestParam(required = false) Boolean favorite,
+            @RequestParam(required = false) String typeGroup,
+            @RequestParam(name = "tag", required = false) List<UUID> tagIds,
+            @RequestParam(name = "collection", required = false) UUID collectionId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate to,
+            @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "25") @Min(1) @Max(100) int size,
-            @RequestParam(defaultValue = "archivedAt,desc") String sort) {
-        return queries.list(AuthenticatedUser.from(jwt), status, favorite, page, size, sort);
+            @RequestParam(defaultValue = "25") @Min(1) @Max(100) int size) {
+        return queries.list(
+                AuthenticatedUser.from(jwt),
+                new FileListQuery(
+                        q,
+                        status,
+                        favorite,
+                        typeGroup,
+                        tagIds,
+                        collectionId,
+                        from,
+                        to,
+                        sort,
+                        page,
+                        size));
     }
 
     @GetMapping("/{id}")
@@ -102,6 +129,15 @@ public class FileController {
             @PathVariable UUID id,
             @Valid @RequestBody ReplaceTagsRequest request) {
         return withETag(edits.replaceTags(AuthenticatedUser.from(jwt), id, request.tags()));
+    }
+
+    @PutMapping("/{id}/collections")
+    public ResponseEntity<FileDetail> replaceCollections(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id,
+            @Valid @RequestBody ReplaceCollectionsRequest request) {
+        return withETag(
+                edits.replaceCollections(AuthenticatedUser.from(jwt), id, request.collectionIds()));
     }
 
     /** Idempotent flag; no If-Match needed because there is nothing to lose. */

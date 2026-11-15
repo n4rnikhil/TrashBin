@@ -72,6 +72,13 @@ public class FileTagDao {
                                 rs.getString(4)));
     }
 
+    public List<UUID> fileIdsWithTag(UUID ownerId, UUID tagId) {
+        return jdbc.queryForList(
+                "select file_id from file_tags where owner_id = :owner and tag_id = :tag",
+                new MapSqlParameterSource().addValue("owner", ownerId).addValue("tag", tagId),
+                UUID.class);
+    }
+
     public Map<UUID, Long> fileCounts(UUID ownerId) {
         Map<UUID, Long> counts = new HashMap<>();
         jdbc.query(

@@ -9,6 +9,8 @@ import app.trashbin.archive.mapper.FileMapper;
 import app.trashbin.archive.repository.ArchivedFileRepository;
 import app.trashbin.archive.service.UploadExceptions.DuplicateFileException;
 import app.trashbin.archive.service.UploadExceptions.QuotaExceededException;
+import app.trashbin.collection.dto.CollectionDtos.CollectionRef;
+import app.trashbin.collection.service.CollectionService;
 import app.trashbin.config.UploadProperties;
 import app.trashbin.tag.dto.TagDtos.TagRef;
 import app.trashbin.tag.service.TagService;
@@ -17,16 +19,22 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** The transactional half of an upload: quota, duplicate policy, row, tags and activity event. */
+/**
+ * The transactional half of an upload: quota, duplicate policy, row, tags, collections, search
+ * index and activity event — all committed together.
+ */
 @Service
 public class ArchiveWriter {
 
     private final ArchivedFileRepository files;
     private final UserService users;
     private final TagService tags;
+    private final CollectionService collections;
+    private final SearchIndexer searchIndexer;
     private final ActivityService activity;
     private final UploadProperties properties;
     private final Clock clock;
@@ -35,19 +43,27 @@ public class ArchiveWriter {
             ArchivedFileRepository files,
             UserService users,
             TagService tags,
+            CollectionService collections,
+            SearchIndexer searchIndexer,
             ActivityService activity,
             UploadProperties properties,
             Clock clock) {
         this.files = files;
         this.users = users;
         this.tags = tags;
+        this.collections = collections;
+        this.searchIndexer = searchIndexer;
         this.activity = activity;
         this.properties = properties;
         this.clock = clock;
     }
 
     @Transactional
-    public FileDetail persist(NewArchivedFile spec, boolean allowDuplicate, List<String> tagNames) {
+    public FileDetail persist(
+            NewArchivedFile spec,
+            boolean allowDuplicate,
+            List<String> tagNames,
+            List<UUID> collectionIds) {
         // Serialize this user's uploads so two concurrent ones cannot both pass the quota check.
         users.lockAccount(spec.ownerId());
 
@@ -65,11 +81,17 @@ public class ArchiveWriter {
         }
 
         ArchivedFile file = files.saveAndFlush(new ArchivedFile(spec, Instant.now(clock)));
+        UUID owner = file.getOwnerId();
         List<TagRef> fileTags =
                 tagNames.isEmpty()
                         ? List.of()
-                        : tags.replaceFileTags(file.getOwnerId(), file.getId(), tagNames);
-        activity.record(file.getId(), file.getOwnerId(), FileEventType.ARCHIVED, Map.of());
-        return FileMapper.toDetail(file, fileTags);
+                        : tags.replaceFileTags(owner, file.getId(), tagNames);
+        List<CollectionRef> fileCollections =
+                collectionIds.isEmpty()
+                        ? List.of()
+                        : collections.replaceCollectionsOfFile(owner, file.getId(), collectionIds);
+        searchIndexer.reindex(owner, List.of(file.getId()));
+        activity.record(file.getId(), owner, FileEventType.ARCHIVED, Map.of());
+        return FileMapper.toDetail(file, fileTags, fileCollections);
     }
 }

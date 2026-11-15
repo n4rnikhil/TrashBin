@@ -21,6 +21,7 @@ const file: FileDetail = {
   contextNote: null,
   originDate: null,
   tags: [],
+  collections: [],
   archivedAt: "2026-11-15T10:00:00Z",
   lastAccessedAt: null,
   discardedAt: null,

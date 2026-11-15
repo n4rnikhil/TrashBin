@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,11 +43,14 @@ public class TagService {
 
     private final TagRepository tags;
     private final FileTagDao links;
+    private final ApplicationEventPublisher events;
     private final Clock clock;
 
-    public TagService(TagRepository tags, FileTagDao links, Clock clock) {
+    public TagService(
+            TagRepository tags, FileTagDao links, ApplicationEventPublisher events, Clock clock) {
         this.tags = tags;
         this.links = links;
+        this.events = events;
         this.clock = clock;
     }
 
@@ -81,11 +85,18 @@ public class TagService {
             tag.recolor(blankToNull(color));
         }
         tags.flush();
+        if (name != null) {
+            publish(caller.id(), links.fileIdsWithTag(caller.id(), tagId));
+        }
         return summary(tag, links.fileCounts(caller.id()).getOrDefault(tagId, 0L));
     }
 
     public void delete(AuthenticatedUser caller, UUID tagId) {
-        tags.delete(require(caller, tagId)); // file links cascade in the database
+        Tag tag = require(caller, tagId);
+        List<UUID> affected = links.fileIdsWithTag(caller.id(), tagId);
+        tags.delete(tag); // file links cascade in the database
+        tags.flush();
+        publish(caller.id(), affected);
     }
 
     /** Moves every file from {@code sourceId} to {@code targetId} and deletes the source tag. */
@@ -95,9 +106,11 @@ public class TagService {
         }
         Tag source = require(caller, sourceId);
         Tag target = require(caller, targetId);
+        List<UUID> affected = links.fileIdsWithTag(caller.id(), sourceId);
         links.copyLinks(caller.id(), sourceId, targetId, Instant.now(clock));
         tags.delete(source);
         tags.flush();
+        publish(caller.id(), affected);
         return summary(target, links.fileCounts(caller.id()).getOrDefault(targetId, 0L));
     }
 
@@ -141,6 +154,13 @@ public class TagService {
             result.get(link.fileId()).add(new TagRef(link.tagId(), link.name(), link.color()));
         }
         return result;
+    }
+
+    /** Lets dependents (search) react to tag changes that affect many files at once. */
+    private void publish(UUID ownerId, List<UUID> fileIds) {
+        if (!fileIds.isEmpty()) {
+            events.publishEvent(new TagsChangedEvent(ownerId, fileIds));
+        }
     }
 
     private Tag saveNew(Tag tag) {

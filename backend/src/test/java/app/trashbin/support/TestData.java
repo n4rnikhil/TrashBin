@@ -18,7 +18,7 @@ public final class TestData {
 
     public static void resetDatabase(JdbcTemplate jdbc) {
         jdbc.execute(
-                "TRUNCATE file_tags, tags, file_events, file_text_content, archived_files,"
+                "TRUNCATE collection_files, collections, file_tags, tags, file_events, file_text_content, archived_files,"
                         + " refresh_tokens, users"
                         + " CASCADE");
     }

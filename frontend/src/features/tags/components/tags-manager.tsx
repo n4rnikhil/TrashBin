@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MoreHorizontal, Tags } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
@@ -84,6 +85,11 @@ export function TagsManager() {
                   <MoreHorizontal />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuItem
+                    render={<Link href={`/archive?tag=${encodeURIComponent(tag.id)}`} />}
+                  >
+                    View files
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setDialog({ kind: "edit", tag })}>
                     Rename or recolor
                   </DropdownMenuItem>

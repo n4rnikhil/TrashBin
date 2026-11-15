@@ -301,8 +301,15 @@ removes its history; this is intentional and documented in the UI confirmation).
 - Content search joins `file_text_content.content_tsv`.
 - Query text is passed through `websearch_to_tsquery('english', :q)`, always as a bound parameter.
 - Ranking: `ts_rank_cd` on the combined vector; ties broken by `archived_at DESC`.
-- Filename fragments additionally match via `display_name % :q` / `ILIKE` using the trigram index.
-- A statement timeout (e.g. 5 s) protects against pathological queries.
+- Filename fragments additionally match via `ILIKE` (wildcards in the query are escaped) and the
+  word-similarity operator `:q <% display_name`, both served by the trigram index. Search sets
+  `pg_trgm.word_similarity_threshold = 0.5` (transaction-local) so one-letter typos still match.
+- The indexed text is defined once, by the SQL function `file_search_vector(file_id)` (V6), which
+  also splits file names on `._-`. `SearchIndexer` calls it after uploads, edits and tag changes
+  (tag renames/merges/deletes publish an event so every affected file is reindexed).
+- A transaction-local statement timeout (5 s) protects against pathological queries.
+- Measured (`SearchPerformanceIT`): 10,000 files, mixed queries, p95 between 146 and 279 ms across
+  local runs (budget 300 ms). The spread comes from machine load; the test can flake on a busy machine.
 
 ## 7. Data lifecycle
 
@@ -329,6 +336,6 @@ removes its history; this is intentional and documented in the UI confirmation).
 | `V2__users_and_refresh_tokens.sql` | auth tables | M1 |
 | `V3__archived_files_and_events.sql` | files, text content, events | M2 |
 | `V4__tags.sql` | tags, file_tags (composite FKs), favorite index | M3a (done) |
-| `V5__collections.sql` | collections, collection_files | M3b |
-| `V6__search_indexes.sql` | GIN/trigram indexes, search vector upkeep | M3b |
+| `V5__collections.sql` | collections, collection_files | M3b (done) |
+| `V6__search.sql` | `file_search_vector()`, backfill, GIN + trigram indexes | M3b (done) |
 | `V7__lifecycle_indexes.sql` | retention/rediscover indexes | M5 |

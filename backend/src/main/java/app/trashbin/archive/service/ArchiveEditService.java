@@ -7,6 +7,7 @@ import app.trashbin.archive.dto.FileDetail;
 import app.trashbin.archive.dto.FileEditRequests.UpdateFileRequest;
 import app.trashbin.archive.mapper.FileMapper;
 import app.trashbin.archive.repository.ArchivedFileRepository;
+import app.trashbin.collection.service.CollectionService;
 import app.trashbin.common.error.InvalidRequestException;
 import app.trashbin.common.error.ResourceNotFoundException;
 import app.trashbin.common.error.VersionConflictException;
@@ -25,20 +26,29 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Metadata edits: details (optimistically locked), tags and the favorite flag. */
+/** Metadata edits: details (optimistically locked), tags, collections and the favorite flag. */
 @Service
 @Transactional
 public class ArchiveEditService {
 
     private final ArchivedFileRepository files;
     private final TagService tags;
+    private final CollectionService collections;
+    private final SearchIndexer searchIndexer;
     private final ActivityService activity;
     private final Clock clock;
 
     public ArchiveEditService(
-            ArchivedFileRepository files, TagService tags, ActivityService activity, Clock clock) {
+            ArchivedFileRepository files,
+            TagService tags,
+            CollectionService collections,
+            SearchIndexer searchIndexer,
+            ActivityService activity,
+            Clock clock) {
         this.files = files;
         this.tags = tags;
+        this.collections = collections;
+        this.searchIndexer = searchIndexer;
         this.activity = activity;
         this.clock = clock;
     }
@@ -76,13 +86,15 @@ public class ArchiveEditService {
         if (!Objects.equals(originDate, file.getOriginDate())) changed.add("originDate");
 
         if (file.updateMetadata(displayName, notes, context, originDate, Instant.now(clock))) {
+            files.saveAndFlush(file);
+            searchIndexer.reindex(caller.id(), List.of(fileId));
             activity.record(
                     file.getId(),
                     file.getOwnerId(),
                     FileEventType.METADATA_EDITED,
                     Map.of("fields", changed));
         }
-        return detail(caller, files.saveAndFlush(file));
+        return detail(caller, file);
     }
 
     public FileDetail replaceTags(AuthenticatedUser caller, UUID fileId, List<String> tagNames) {
@@ -91,13 +103,23 @@ public class ArchiveEditService {
         List<TagRef> after = tags.replaceFileTags(caller.id(), fileId, tagNames);
         if (!before.equals(after)) {
             file.touch(Instant.now(clock));
+            files.saveAndFlush(file);
+            searchIndexer.reindex(caller.id(), List.of(fileId));
             activity.record(
                     file.getId(),
                     file.getOwnerId(),
                     FileEventType.METADATA_EDITED,
                     Map.of("fields", List.of("tags")));
         }
-        return FileMapper.toDetail(files.saveAndFlush(file), after);
+        return detail(caller, file);
+    }
+
+    /** Collection membership is not part of the file's own data, so the version does not move. */
+    public FileDetail replaceCollections(
+            AuthenticatedUser caller, UUID fileId, List<UUID> collectionIds) {
+        ArchivedFile file = require(caller, fileId);
+        collections.replaceCollectionsOfFile(caller.id(), fileId, collectionIds);
+        return detail(caller, file);
     }
 
     public FileDetail setFavorite(AuthenticatedUser caller, UUID fileId, boolean favorite) {
@@ -108,7 +130,9 @@ public class ArchiveEditService {
 
     private FileDetail detail(AuthenticatedUser caller, ArchivedFile file) {
         return FileMapper.toDetail(
-                file, tags.tagsForFiles(caller.id(), List.of(file.getId())).get(file.getId()));
+                file,
+                tags.tagsForFiles(caller.id(), List.of(file.getId())).get(file.getId()),
+                collections.collectionsOfFile(caller.id(), file.getId()));
     }
 
     private ArchivedFile require(AuthenticatedUser caller, UUID fileId) {

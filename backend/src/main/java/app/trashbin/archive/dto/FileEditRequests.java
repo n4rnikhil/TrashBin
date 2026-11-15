@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 
 /** Request bodies for editing a file's metadata. */
 public final class FileEditRequests {
@@ -23,6 +24,10 @@ public final class FileEditRequests {
 
     /** The complete new tag set (unknown names are created). */
     public record ReplaceTagsRequest(@NotNull @Size(max = 20) List<@NotNull String> tags) {}
+
+    /** The complete set of collections the file should belong to. */
+    public record ReplaceCollectionsRequest(
+            @NotNull @Size(max = 50) List<@NotNull UUID> collectionIds) {}
 
     public record FavoriteRequest(@NotNull Boolean favorite) {}
 }

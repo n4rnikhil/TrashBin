@@ -42,6 +42,11 @@ export type UpdateTagRequest = Schemas["UpdateTagRequest"];
 /** Partial edit: omitted fields stay, "" clears notes/contextNote/originDate. */
 export type UpdateFileRequest = Schemas["UpdateFileRequest"];
 
+export type CollectionRef = Required<Schemas["CollectionRef"]>;
+export type CollectionSummary = Nullable<Required<Schemas["CollectionSummary"]>, "description">;
+export type CreateCollectionRequest = Schemas["CreateCollectionRequest"];
+export type UpdateCollectionRequest = Schemas["UpdateCollectionRequest"];
+
 type Narrowed<T> = Omit<T, "typeGroup" | "status" | "tags"> & {
   typeGroup: TypeGroup;
   status: FileStatus;
@@ -51,10 +56,10 @@ type Narrowed<T> = Omit<T, "typeGroup" | "status" | "tags"> & {
 export type FileSummary = Narrowed<Nullable<Required<Schemas["FileSummary"]>, "originDate">>;
 export type FileDetail = Narrowed<
   Nullable<
-    Required<Schemas["FileDetail"]>,
+    Omit<Required<Schemas["FileDetail"]>, "collections">,
     "notes" | "contextNote" | "originDate" | "lastAccessedAt" | "discardedAt" | "purgeAfter"
   >
->;
+> & { collections: CollectionRef[] };
 
 export type PageResponse<T> = {
   content: T[];

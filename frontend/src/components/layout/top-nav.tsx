@@ -11,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserMenu } from "@/features/auth";
+import { QuickSearch } from "@/features/files";
 import { BackendStatusIndicator } from "@/features/status";
 import { findNavItem } from "./nav-config";
 
@@ -34,6 +35,7 @@ export function TopNav() {
         </Breadcrumb>
       ) : null}
       <div className="ml-auto flex items-center gap-1">
+        {pathname !== "/archive" ? <QuickSearch className="hidden md:block" /> : null}
         <BackendStatusIndicator className="hidden sm:inline-flex" />
         <UserMenu />
       </div>

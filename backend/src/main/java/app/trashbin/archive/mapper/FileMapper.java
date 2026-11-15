@@ -3,6 +3,7 @@ package app.trashbin.archive.mapper;
 import app.trashbin.archive.domain.ArchivedFile;
 import app.trashbin.archive.dto.FileDetail;
 import app.trashbin.archive.dto.FileSummary;
+import app.trashbin.collection.dto.CollectionDtos.CollectionRef;
 import app.trashbin.tag.dto.TagDtos.TagRef;
 import java.util.List;
 
@@ -24,7 +25,8 @@ public final class FileMapper {
                 List.copyOf(tags));
     }
 
-    public static FileDetail toDetail(ArchivedFile f, List<TagRef> tags) {
+    public static FileDetail toDetail(
+            ArchivedFile f, List<TagRef> tags, List<CollectionRef> collections) {
         return new FileDetail(
                 f.getId(),
                 f.getDisplayName(),
@@ -39,6 +41,7 @@ public final class FileMapper {
                 f.getContextNote(),
                 f.getOriginDate(),
                 List.copyOf(tags),
+                List.copyOf(collections),
                 f.getArchivedAt(),
                 f.getLastAccessedAt(),
                 f.getDiscardedAt(),
