@@ -1,0 +1,55 @@
+# Base configuration. Every environment-specific value is read from environment variables
+# (optionally loaded from backend/.env). Nothing sensitive has a default here.
+# Reference: docs/SYSTEM_ARCHITECTURE.md "Configuration reference".
+spring:
+  application:
+    name: trashbin
+  profiles:
+    default: dev
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${TRASHBIN_DB_URL}
+    username: ${TRASHBIN_DB_USERNAME}
+    password: ${TRASHBIN_DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
+      max-request-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: 8080
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+# OpenAPI documentation is off unless a profile turns it on (dev, test).
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+trashbin:
+  storage:
+    root: ${TRASHBIN_STORAGE_ROOT}

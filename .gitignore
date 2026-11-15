@@ -1,0 +1,155 @@
+# ============================================================
+# Secrets and local configuration (NEVER commit)
+# ============================================================
+.env
+.env.*
+!.env.example
+!*.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# ============================================================
+# Application data (storage root should live outside the repo; this is a safety net)
+# ============================================================
+/data/
+/storage/
+trashbin-data/
+**/staging/
+*.sql.gz
+*.dump
+
+# ============================================================
+# Java / Maven
+# ============================================================
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+.flattened-pom.xml
+.factorypath
+.apt_generated/
+.apt_generated_tests/
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+*.log
+logs/
+
+# ============================================================
+# Node.js / Next.js
+# ============================================================
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+next-env.d.ts
+.next/
+out/
+build/
+.vercel/
+.turbo/
+coverage/
+.nyc_output/
+
+# Testing artifacts
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+# ============================================================
+# IDEs and editors
+# ============================================================
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# ============================================================
+# Windows
+# ============================================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+[Dd]esktop.ini
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# ============================================================
+# Other OS noise
+# ============================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============================================================
+# AI tooling local state
+# ============================================================
+.claude/settings.local.json
+.claude/scratch/
+graphify-out/
+
+# ============================================================
+# Temporary files
+# ============================================================
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej

@@ -1,0 +1,14 @@
+# Test profile: isolated database and a throwaway storage directory.
+spring:
+  datasource:
+    url: ${TRASHBIN_TEST_DB_URL}
+    username: ${TRASHBIN_TEST_DB_USERNAME}
+    password: ${TRASHBIN_TEST_DB_PASSWORD}
+
+springdoc:
+  api-docs:
+    enabled: true
+
+trashbin:
+  storage:
+    root: ${java.io.tmpdir}/trashbin-test-storage

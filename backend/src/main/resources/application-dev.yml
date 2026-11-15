@@ -1,0 +1,10 @@
+# Development profile: Swagger UI and readable logs.
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    app.trashbin: DEBUG

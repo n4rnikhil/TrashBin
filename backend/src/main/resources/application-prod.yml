@@ -1,0 +1,6 @@
+# Hardened local run: no Swagger, no debug logging. Secure-cookie and JSON-log settings are added with
+# authentication (M1).
+logging:
+  level:
+    root: INFO
+    app.trashbin: INFO
