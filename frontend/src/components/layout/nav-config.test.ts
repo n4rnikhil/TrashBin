@@ -18,6 +18,8 @@ describe("nav-config", () => {
       "/archive",
       "/collections",
       "/tags",
+      "/rediscover",
+      "/discarded",
       "/status",
       "/settings",
     ]);

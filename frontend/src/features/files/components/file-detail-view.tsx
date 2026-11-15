@@ -16,6 +16,7 @@ import { ApiError, errorMessage } from "@/lib/api/errors";
 import type { ExtractionStatus } from "@/lib/api/types";
 import { fileKeys, filesApi } from "../api/files-api";
 import { formatBytes, formatCalendarDate, formatDateTime } from "../format";
+import { ActivityTimeline } from "./activity-timeline";
 import { DownloadButton } from "./download-button";
 import { EditFileDialog } from "./edit-file-dialog";
 import { FavoriteButton } from "./favorite-button";
@@ -23,6 +24,8 @@ import { FileCollectionsCard } from "./file-collections-card";
 import { FilePreview } from "./file-preview";
 import { FileTagsCard } from "./file-tags-card";
 import { FileTypeIcon, TYPE_LABELS } from "./file-type-icon";
+import { IntegrityCheck } from "./integrity-check";
+import { DiscardButton, DiscardedBanner } from "./lifecycle-actions";
 
 /** What content search can do with this file. */
 export const EXTRACTION_LABELS: Record<ExtractionStatus, string> = {
@@ -115,9 +118,12 @@ export function FileDetailView() {
           <Button variant="outline" onClick={() => setEditing(true)}>
             <Pencil aria-hidden /> Edit details
           </Button>
+          {f.status === "ARCHIVED" ? <DiscardButton file={f} /> : null}
         </div>
       </header>
       <EditFileDialog file={f} open={editing} onOpenChange={setEditing} />
+
+      {f.status === "DISCARDED" ? <DiscardedBanner file={f} /> : null}
 
       {f.previewable ? <FilePreview file={f} /> : null}
 
@@ -172,8 +178,13 @@ export function FileDetailView() {
               <code className="text-muted-foreground font-mono text-xs break-all">{f.sha256}</code>
             </Row>
           </dl>
+          <div className="mt-4">
+            <IntegrityCheck fileId={f.id} />
+          </div>
         </CardContent>
       </Card>
+
+      <ActivityTimeline fileId={f.id} />
     </div>
   );
 }

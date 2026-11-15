@@ -116,6 +116,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/files/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["verify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/{id}/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["discard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/files/{id}/access-tickets": {
         parameters: {
             query?: never;
@@ -286,7 +334,7 @@ export interface paths {
         get: operations["get"];
         put?: never;
         post?: never;
-        delete?: never;
+        delete: operations["purge"];
         options?: never;
         head?: never;
         patch: operations["update_2"];
@@ -324,6 +372,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/rediscover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["rediscover"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -332,6 +412,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/{id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["events"];
         put?: never;
         post?: never;
         delete?: never;
@@ -459,6 +555,13 @@ export interface components {
             collectionIds?: string[];
             allowDuplicate?: boolean;
         };
+        IntegrityResult: {
+            ok?: boolean;
+            expectedSha256?: string;
+            actualSha256?: string;
+            /** Format: date-time */
+            verifiedAt?: string;
+        };
         TicketRequest: {
             /** @enum {string} */
             purpose: "DOWNLOAD" | "PREVIEW";
@@ -539,11 +642,17 @@ export interface components {
             expiresAt?: string;
             userAgent?: string;
         };
-        HealthResponse: {
-            status?: string;
-            database?: string;
-            /** Format: date-time */
-            timestamp?: string;
+        Stats: {
+            /** Format: int64 */
+            archivedCount?: number;
+            /** Format: int64 */
+            discardedCount?: number;
+            /** Format: int64 */
+            usedBytes?: number;
+            /** Format: int64 */
+            quotaBytes?: number;
+            /** Format: int32 */
+            retentionDays?: number;
         };
         FileSummary: {
             /** Format: uuid */
@@ -560,10 +669,39 @@ export interface components {
             archivedAt?: string;
             /** Format: date */
             originDate?: string;
+            /** Format: date-time */
+            purgeAfter?: string;
             tags?: components["schemas"]["TagRef"][];
+        };
+        HealthResponse: {
+            status?: string;
+            database?: string;
+            /** Format: date-time */
+            timestamp?: string;
         };
         PageResponseFileSummary: {
             content?: components["schemas"]["FileSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        FileEventView: {
+            /** Format: uuid */
+            id?: string;
+            type?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            details?: {
+                [key: string]: unknown;
+            };
+        };
+        PageResponseFileEventView: {
+            content?: components["schemas"]["FileEventView"][];
             /** Format: int32 */
             page?: number;
             /** Format: int32 */
@@ -803,6 +941,72 @@ export interface operations {
         responses: {
             /** @description Created */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["IntegrityResult"];
+                };
+            };
+        };
+    };
+    restore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileDetail"];
+                };
+            };
+        };
+    };
+    discard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1122,6 +1326,26 @@ export interface operations {
             };
         };
     };
+    purge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     update_2: {
         parameters: {
             query?: never;
@@ -1238,6 +1462,48 @@ export interface operations {
             };
         };
     };
+    stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Stats"];
+                };
+            };
+        };
+    };
+    rediscover: {
+        parameters: {
+            query: {
+                mode: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileSummary"][];
+                };
+            };
+        };
+    };
     health: {
         parameters: {
             query?: never;
@@ -1254,6 +1520,31 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    events: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseFileEventView"];
                 };
             };
         };

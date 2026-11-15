@@ -371,6 +371,87 @@
         }
       }
     },
+    "/api/v1/files/{id}/verify" : {
+      "post" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "verify",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IntegrityResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/{id}/restore" : {
+      "post" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "restore",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/{id}/discard" : {
+      "post" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "discard",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/files/{id}/access-tickets" : {
       "post" : {
         "tags" : [ "content-controller" ],
@@ -710,6 +791,24 @@
           }
         }
       },
+      "delete" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "purge",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      },
       "patch" : {
         "tags" : [ "file-controller" ],
         "operationId" : "update_2",
@@ -854,6 +953,53 @@
         }
       }
     },
+    "/api/v1/stats" : {
+      "get" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "stats",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Stats"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rediscover" : {
+      "get" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "rediscover",
+        "parameters" : [ {
+          "name" : "mode",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/FileSummary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/health" : {
       "get" : {
         "tags" : [ "health-controller" ],
@@ -865,6 +1011,54 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/{id}/events" : {
+      "get" : {
+        "tags" : [ "file-lifecycle-controller" ],
+        "operationId" : "events",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "maximum" : 100,
+            "minimum" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponseFileEventView"
                 }
               }
             }
@@ -1184,6 +1378,24 @@
           }
         }
       },
+      "IntegrityResult" : {
+        "type" : "object",
+        "properties" : {
+          "ok" : {
+            "type" : "boolean"
+          },
+          "expectedSha256" : {
+            "type" : "string"
+          },
+          "actualSha256" : {
+            "type" : "string"
+          },
+          "verifiedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "TicketRequest" : {
         "type" : "object",
         "properties" : {
@@ -1417,18 +1629,28 @@
           }
         }
       },
-      "HealthResponse" : {
+      "Stats" : {
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string"
+          "archivedCount" : {
+            "type" : "integer",
+            "format" : "int64"
           },
-          "database" : {
-            "type" : "string"
+          "discardedCount" : {
+            "type" : "integer",
+            "format" : "int64"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "usedBytes" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "quotaBytes" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "retentionDays" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -1469,11 +1691,30 @@
             "type" : "string",
             "format" : "date"
           },
+          "purgeAfter" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
           "tags" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/TagRef"
             }
+          }
+        }
+      },
+      "HealthResponse" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string"
+          },
+          "database" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
@@ -1484,6 +1725,53 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/FileSummary"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "FileEventView" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "details" : {
+            "type" : "object",
+            "additionalProperties" : { }
+          }
+        }
+      },
+      "PageResponseFileEventView" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FileEventView"
             }
           },
           "page" : {

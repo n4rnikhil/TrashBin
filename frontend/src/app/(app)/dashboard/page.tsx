@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/patterns/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/typography";
-import { RecentFiles } from "@/features/files";
+import { RecentFiles, StatsCard } from "@/features/files";
 import { BackendStatusCard } from "@/features/status";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -47,6 +47,7 @@ export default function DashboardPage() {
         </Card>
 
         <div className="flex flex-col gap-6">
+          <StatsCard />
           <BackendStatusCard />
           <Card>
             <CardHeader>

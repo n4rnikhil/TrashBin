@@ -6,10 +6,11 @@ Trash Bin is a hybrid **digital archive + digital memory** web application. You 
 longer actively need but may want again. Trash Bin preserves the original bytes, plus your notes,
 tags and context, so you can search, preview, download, restore and rediscover them later.
 
-**Project status:** `M4 — retrieve` complete. Accounts, sessions, uploads (signature, duplicate and quota
+**Project status:** `M5 — lifecycle and memory` complete. Accounts, sessions, uploads (signature, duplicate and quota
 checks), the archive, file details, tags, collections, favorites, metadata editing, full-text search
-(including text inside PDF, Office and text files), download and inline preview work end to end.
-Discard, restore and rediscovery arrive in M5. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
+(including text inside PDF, Office and text files), download, inline preview, discard / restore /
+permanent delete (auto-purge after 30 days), integrity check, activity timeline, Rediscover and
+dashboard stats work end to end. M6 (hardening and release) is next. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 
 ---
 

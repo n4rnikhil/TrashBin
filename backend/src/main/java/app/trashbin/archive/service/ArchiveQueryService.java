@@ -1,5 +1,7 @@
 package app.trashbin.archive.service;
 
+import app.trashbin.activity.dto.FileEventView;
+import app.trashbin.activity.service.ActivityService;
 import app.trashbin.archive.domain.ArchivedFile;
 import app.trashbin.archive.domain.FileStatus;
 import app.trashbin.archive.domain.TypeGroup;
@@ -54,16 +56,19 @@ public class ArchiveQueryService {
     private final FileSearchDao search;
     private final TagService tags;
     private final CollectionService collections;
+    private final ActivityService activity;
 
     public ArchiveQueryService(
             ArchivedFileRepository files,
             FileSearchDao search,
             TagService tags,
-            CollectionService collections) {
+            CollectionService collections,
+            ActivityService activity) {
         this.files = files;
         this.search = search;
         this.tags = tags;
         this.collections = collections;
+        this.activity = activity;
     }
 
     public PageResponse<FileSummary> list(AuthenticatedUser caller, FileListQuery query) {
@@ -125,6 +130,15 @@ public class ArchiveQueryService {
                 file,
                 tags.tagsForFiles(caller.id(), List.of(fileId)).get(fileId),
                 collections.collectionsOfFile(caller.id(), fileId));
+    }
+
+    /** The activity timeline of one of the caller's files. */
+    public PageResponse<FileEventView> timeline(
+            AuthenticatedUser caller, UUID fileId, int page, int size) {
+        if (files.findByIdAndOwnerId(fileId, caller.id()).isEmpty()) {
+            throw new ResourceNotFoundException();
+        }
+        return activity.timeline(caller.id(), fileId, page, size);
     }
 
     private static Instant startOfDay(java.time.LocalDate date) {

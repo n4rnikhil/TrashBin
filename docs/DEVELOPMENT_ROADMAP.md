@@ -162,10 +162,13 @@ Delivered in two parts: **M4a** (signed download/preview links, Range support, p
 
 ## M5 — Lifecycle and memory
 
+**Done.** Retention runs daily at 03:00 (`RetentionJob`). Covered by `LifecycleIT`, `RediscoverIT` and
+`LifecycleServiceTest`; the Playwright journey is deferred to M6 with the other E2E suites.
+
 **Goal:** the "nothing is trash until you decide" lifecycle, plus rediscovery. Requirements: FR-L1 – FR-L4, FR-F6, FR-M1 – FR-M5.
 
 **Scope**
-- Flyway `V6`; discard / restore / purge endpoints and UI (Discarded view, countdown, confirmation)
+- Flyway `V7`; discard / restore / purge endpoints and UI (Discarded view, countdown, confirmation)
 - Retention job (batched, configurable, `0` disables); `afterCommit` blob deletion; reconciler interplay
 - Events timeline; integrity verify; rediscover (`on-this-day`, `forgotten`, `random`); stats and quota display
 

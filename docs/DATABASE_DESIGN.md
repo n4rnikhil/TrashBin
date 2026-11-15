@@ -338,4 +338,4 @@ removes its history; this is intentional and documented in the UI confirmation).
 | `V4__tags.sql` | tags, file_tags (composite FKs), favorite index | M3a (done) |
 | `V5__collections.sql` | collections, collection_files | M3b (done) |
 | `V6__search.sql` | `file_search_vector()`, backfill, GIN + trigram indexes | M3b (done) |
-| `V7__lifecycle_indexes.sql` | retention/rediscover indexes | M5 |
+| `V7__lifecycle.sql` | retention/rediscover indexes | M5 (done) |

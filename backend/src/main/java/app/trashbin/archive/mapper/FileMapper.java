@@ -24,6 +24,7 @@ public final class FileMapper {
                 Previews.isPreviewable(f.getMediaType()),
                 f.getArchivedAt(),
                 f.getOriginDate(),
+                f.getPurgeAfter(),
                 List.copyOf(tags));
     }
 

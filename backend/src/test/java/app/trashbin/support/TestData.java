@@ -53,4 +53,24 @@ public final class TestData {
                         .getContentAsString();
         return "Bearer " + json.readTree(body).get("accessToken").asText();
     }
+
+    /** Signs in an existing test account again (e.g. after moving the test clock forward). */
+    public static String login(MockMvc mockMvc, ObjectMapper json, String email) throws Exception {
+        String body =
+                mockMvc.perform(
+                                post("/api/v1/auth/login")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                json.writeValueAsString(
+                                                        Map.of(
+                                                                "email",
+                                                                email,
+                                                                "password",
+                                                                PASSWORD))))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        return "Bearer " + json.readTree(body).get("accessToken").asText();
+    }
 }

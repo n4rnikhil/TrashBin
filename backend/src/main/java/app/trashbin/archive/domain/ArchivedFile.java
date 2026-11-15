@@ -137,6 +137,36 @@ public class ArchivedFile {
         return changed;
     }
 
+    /**
+     * Moves the file to Discarded. {@code purgeAfter} may be null (automatic purge disabled).
+     *
+     * @return false if it was not archived
+     */
+    public boolean discard(Instant now, Instant purgeAfterTime) {
+        if (status != FileStatus.ARCHIVED) {
+            return false;
+        }
+        this.status = FileStatus.DISCARDED;
+        this.discardedAt = now;
+        this.purgeAfter = purgeAfterTime;
+        this.updatedAt = now;
+        return true;
+    }
+
+    /**
+     * @return false if it was not discarded
+     */
+    public boolean restore(Instant now) {
+        if (status != FileStatus.DISCARDED) {
+            return false;
+        }
+        this.status = FileStatus.ARCHIVED;
+        this.discardedAt = null;
+        this.purgeAfter = null;
+        this.updatedAt = now;
+        return true;
+    }
+
     public void markFavorite(boolean newFavorite, Instant now) {
         if (favorite != newFavorite) {
             this.favorite = newFavorite;

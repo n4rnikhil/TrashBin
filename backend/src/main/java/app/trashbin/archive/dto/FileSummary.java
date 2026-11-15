@@ -21,4 +21,5 @@ public record FileSummary(
         boolean previewable,
         Instant archivedAt,
         LocalDate originDate,
+        Instant purgeAfter,
         List<TagRef> tags) {}

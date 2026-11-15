@@ -19,6 +19,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "Email already registered"),
     DUPLICATE_FILE(HttpStatus.CONFLICT, "Duplicate file"),
     TAG_ALREADY_EXISTS(HttpStatus.CONFLICT, "Tag already exists"),
+    INVALID_STATE_TRANSITION(HttpStatus.CONFLICT, "Not possible in the current state"),
     COLLECTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "Collection already exists"),
     VERSION_CONFLICT(HttpStatus.PRECONDITION_FAILED, "Version conflict"),
     PRECONDITION_REQUIRED(HttpStatus.PRECONDITION_REQUIRED, "Precondition required"),

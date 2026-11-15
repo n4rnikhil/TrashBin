@@ -2,6 +2,7 @@ package app.trashbin.archive.repository;
 
 import app.trashbin.archive.domain.ArchivedFile;
 import app.trashbin.archive.domain.ExtractionStatus;
+import app.trashbin.archive.domain.FileStatus;
 import app.trashbin.common.persistence.OwnedEntityRepository;
 import java.time.Instant;
 import java.util.Collection;
@@ -32,6 +33,16 @@ public interface ArchivedFileRepository
     long sumSizeByOwnerId(@Param("ownerId") UUID ownerId);
 
     boolean existsByStorageKey(UUID storageKey);
+
+    long countByOwnerIdAndStatus(UUID ownerId, FileStatus status);
+
+    /** Discarded files whose grace period ended, oldest deadline first. */
+    @Query(
+            "select new app.trashbin.archive.repository.FileOwnerRef(f.id, f.ownerId)"
+                    + " from ArchivedFile f where f.status = :status and f.purgeAfter < :now"
+                    + " order by f.purgeAfter")
+    List<FileOwnerRef> findPurgeDue(
+            @Param("status") FileStatus status, @Param("now") Instant now, Pageable pageable);
 
     /**
      * Records an access without touching the version (a bulk update bypasses optimistic locking),

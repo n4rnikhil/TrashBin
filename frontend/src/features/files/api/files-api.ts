@@ -2,6 +2,11 @@ import { apiFetch } from "@/lib/api/client";
 import type {
   AccessTicket,
   FileDetail,
+  FileEvent,
+  FileStatus,
+  IntegrityResult,
+  RediscoverMode,
+  Stats,
   TicketPurpose,
   FileSummary,
   PageResponse,
@@ -19,6 +24,8 @@ export type ListFilesParams = {
   page: number;
   size: number;
   sort?: FileSort;
+  /** Defaults to ARCHIVED on the server. */
+  status?: FileStatus;
   q?: string;
   favorite?: boolean;
   typeGroup?: TypeGroup;
@@ -34,6 +41,7 @@ const fileUrl = (id: string) => `/api/v1/files/${encodeURIComponent(id)}`;
 export function listQueryString(params: ListFilesParams): string {
   const query = new URLSearchParams({ page: String(params.page), size: String(params.size) });
   if (params.sort) query.set("sort", params.sort);
+  if (params.status) query.set("status", params.status);
   if (params.q) query.set("q", params.q);
   if (params.favorite !== undefined) query.set("favorite", String(params.favorite));
   if (params.typeGroup) query.set("typeGroup", params.typeGroup);
@@ -78,6 +86,23 @@ export const filesApi = {
       body: { collectionIds },
     }),
 
+  discard: (id: string) => apiFetch<FileDetail>(`${fileUrl(id)}/discard`, { method: "POST" }),
+
+  restore: (id: string) => apiFetch<FileDetail>(`${fileUrl(id)}/restore`, { method: "POST" }),
+
+  /** Permanent; the server only allows it for discarded files. */
+  purge: (id: string) => apiFetch<void>(fileUrl(id), { method: "DELETE" }),
+
+  verify: (id: string) => apiFetch<IntegrityResult>(`${fileUrl(id)}/verify`, { method: "POST" }),
+
+  events: (id: string, signal?: AbortSignal) =>
+    apiFetch<PageResponse<FileEvent>>(`${fileUrl(id)}/events?size=50`, signal ? { signal } : {}),
+
+  rediscover: (mode: RediscoverMode, signal?: AbortSignal) =>
+    apiFetch<FileSummary[]>(`/api/v1/rediscover?mode=${mode}`, signal ? { signal } : {}),
+
+  stats: (signal?: AbortSignal) => apiFetch<Stats>("/api/v1/stats", signal ? { signal } : {}),
+
   /** Asks for a short-lived download or preview link (counts as one access). */
   createTicket: (id: string, purpose: TicketPurpose) =>
     apiFetch<AccessTicket>(`${fileUrl(id)}/access-tickets`, {
@@ -103,4 +128,7 @@ export const fileKeys = {
   list: (params: ListFilesParams) => ["files", "list", params] as const,
   detail: (id: string) => ["files", "detail", id] as const,
   preview: (id: string) => ["files", "preview", id] as const,
+  events: (id: string) => ["files", "events", id] as const,
+  rediscover: (mode: RediscoverMode) => ["files", "rediscover", mode] as const,
+  stats: ["files", "stats"] as const,
 };

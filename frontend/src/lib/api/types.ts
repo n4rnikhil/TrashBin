@@ -59,7 +59,26 @@ type Narrowed<T> = Omit<T, "typeGroup" | "status" | "tags"> & {
   tags: TagRef[];
 };
 
-export type FileSummary = Narrowed<Nullable<Required<Schemas["FileSummary"]>, "originDate">>;
+export type FileSummary = Narrowed<
+  Nullable<Required<Schemas["FileSummary"]>, "originDate" | "purgeAfter">
+>;
+
+/** Overview numbers; `retentionDays` 0 means discarded files are never purged automatically. */
+export type Stats = Required<Schemas["Stats"]>;
+/** Result of re-hashing the stored bytes; `actualSha256` is null when the bytes are missing. */
+export type IntegrityResult = Omit<Required<Schemas["IntegrityResult"]>, "actualSha256"> & {
+  actualSha256: string | null;
+};
+export type FileEventType =
+  | "ARCHIVED"
+  | "METADATA_EDITED"
+  | "DOWNLOADED"
+  | "PREVIEWED"
+  | "DISCARDED"
+  | "RESTORED"
+  | "INTEGRITY_VERIFIED";
+export type FileEvent = Omit<Required<Schemas["FileEventView"]>, "type"> & { type: FileEventType };
+export type RediscoverMode = "on-this-day" | "forgotten" | "random";
 export type FileDetail = Narrowed<
   Nullable<
     Omit<Required<Schemas["FileDetail"]>, "collections" | "extractionStatus">,

@@ -36,6 +36,7 @@ const summary: FileSummary = {
   previewable: false,
   archivedAt: "2026-11-15T10:00:00Z",
   originDate: null,
+  purgeAfter: null,
   tags: [{ id: TAG, name: "housing", color: "#4F46E5" }],
 };
 

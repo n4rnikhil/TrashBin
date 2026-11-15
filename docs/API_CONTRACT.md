@@ -246,7 +246,8 @@ are live. Search (`q`) also matches text extracted from file contents once a fil
 { "id": "…", "displayName": "Tax return 2019", "mediaType": "application/pdf", "typeGroup": "DOCUMENT",
   "sizeBytes": 482113, "status": "ARCHIVED", "favorite": false, "previewable": true,
   "tags": [ { "id": "…", "name": "tax", "color": "#3366CC" } ],
-  "archivedAt": "2026-11-15T10:15:30Z", "originDate": "2020-04-15", "extractionStatus": "DONE" }
+  "archivedAt": "2026-11-15T10:15:30Z", "originDate": "2020-04-15", "extractionStatus": "DONE",
+  "purgeAfter": null }  // set while DISCARDED; null when retention is 0
 // FileDetail = FileSummary +
 { "originalFilename": "scan_0042.pdf", "sha256": "<64 hex>", "notes": "…", "contextNote": "…",
   "collections": [ { "id": "…", "name": "Taxes" } ], "discardedAt": null, "purgeAfter": null,
@@ -255,8 +256,10 @@ are live. Search (`q`) also matches text extracted from file contents once a fil
 { "url": "/api/v1/content/<ticket>", "expiresAt": "2026-11-15T10:16:30Z" }
 // IntegrityResult
 { "ok": true, "expectedSha256": "<64 hex>", "actualSha256": "<64 hex>", "verifiedAt": "…" }
+// (actualSha256 is null when the blob is missing; ok is then false)
 // Stats
-{ "archivedCount": 120, "discardedCount": 4, "usedBytes": 91234567, "quotaBytes": 5368709120 }
+{ "archivedCount": 120, "discardedCount": 4, "usedBytes": 91234567, "quotaBytes": 5368709120,
+  "retentionDays": 30 }
 ```
 
 Never present in any response: `storageKey`, `ownerId`, `passwordHash`, refresh tokens, other users' data.
