@@ -2,6 +2,7 @@ import {
   Activity,
   Archive,
   LayoutDashboard,
+  Settings,
   Library,
   type LucideIcon,
   Sparkles,
@@ -47,7 +48,10 @@ export const NAV_GROUPS: readonly NavGroup[] = [
   },
   {
     label: "System",
-    items: [{ title: "Status", href: "/status", icon: Activity, status: "available" }],
+    items: [
+      { title: "Status", href: "/status", icon: Activity, status: "available" },
+      { title: "Settings", href: "/settings", icon: Settings, status: "available" },
+    ],
   },
 ];
 

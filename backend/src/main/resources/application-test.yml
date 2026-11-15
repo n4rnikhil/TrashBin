@@ -12,3 +12,9 @@ springdoc:
 trashbin:
   storage:
     root: ${java.io.tmpdir}/trashbin-test-storage
+  auth:
+    # Fixed, test-only signing key (Base64 of 48 arbitrary bytes). Never used outside tests.
+    jwt-secret: dGVzdC1vbmx5LXNpZ25pbmcta2V5LWZvci10cmFzaGJpbi1pbnRlZ3JhdGlvbi10ZXN0cw==
+    rate-limit-per-minute: 100000
+    bcrypt-cost: 4
+    bootstrap-admin-email: admin@example.com

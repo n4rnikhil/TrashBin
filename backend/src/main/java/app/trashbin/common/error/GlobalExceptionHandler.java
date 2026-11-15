@@ -1,5 +1,7 @@
 package app.trashbin.common.error;
 
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -44,8 +47,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             if (status.is5xxServerError()) {
                 problem.setDetail(GENERIC_DETAIL);
             }
+            if (ex instanceof MethodArgumentNotValidException invalid) {
+                problem.setDetail("One or more fields are invalid.");
+                problem.setProperty("errors", fieldErrors(invalid));
+            }
         }
         return response;
+    }
+
+    @ExceptionHandler(TrashBinException.class)
+    ResponseEntity<ProblemDetail> handleExpected(TrashBinException ex) {
+        ProblemDetail problem = Problems.of(ex.code(), ex.getMessage());
+        ResponseEntity.BodyBuilder builder = ResponseEntity.status(problem.getStatus());
+        if (ex instanceof TooManyRequestsException throttled) {
+            builder.header(HttpHeaders.RETRY_AFTER, String.valueOf(throttled.retryAfterSeconds()));
+        }
+        return builder.body(problem);
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -62,6 +79,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ResponseEntity<ProblemDetail> handleUnexpected(Exception ex) {
         log.error("Unhandled exception", ex);
         return toResponse(Problems.of(ErrorCode.INTERNAL_ERROR, GENERIC_DETAIL));
+    }
+
+    private static List<Map<String, String>> fieldErrors(MethodArgumentNotValidException ex) {
+        return ex.getBindingResult().getFieldErrors().stream()
+                .map(
+                        error ->
+                                Map.of(
+                                        "field",
+                                        error.getField(),
+                                        "message",
+                                        error.getDefaultMessage() == null
+                                                ? "is invalid"
+                                                : error.getDefaultMessage()))
+                .toList();
     }
 
     private static ResponseEntity<ProblemDetail> toResponse(ProblemDetail problem) {

@@ -1,7 +1,7 @@
-import type { components } from "@/lib/api/generated/schema";
 import { apiRequest } from "@/lib/api/client";
+import type { HealthResponse } from "@/lib/api/types";
 
-export type HealthResponse = components["schemas"]["HealthResponse"];
+export type { HealthResponse };
 
 /** Result of probing the backend through the Next.js proxy. */
 export type BackendStatus =

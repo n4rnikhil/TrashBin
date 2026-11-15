@@ -242,7 +242,7 @@ references each variable explicitly (`${TRASHBIN_...}`). Real environment variab
 | `TRASHBIN_ALLOWED_ORIGIN` | no | `http://localhost:3000` | Exact origin allowed for cookie endpoints and CORS. No wildcard. |
 | `TRASHBIN_COOKIE_SECURE` | no | `false` (dev) / `true` (other) | `Secure` attribute of the refresh cookie. |
 | `TRASHBIN_REGISTRATION_ENABLED` | no | `true` | Allows `POST /auth/register`. |
-| `TRASHBIN_TRUSTED_PROXIES` | no | `127.0.0.1,::1` | Only these peers may set `X-Forwarded-For`. |
+| `TRASHBIN_BOOTSTRAP_ADMIN_EMAIL` | no | *(empty)* | The account that registers with this email becomes `ADMIN`. |
 | `TRASHBIN_AUTH_RATE_LIMIT_PER_MINUTE` | no | `10` | Per-IP request limit on `/auth/*`. |
 | `TRASHBIN_ACCESS_TOKEN_TTL` | no | `PT10M` | ISO-8601 duration. |
 | `TRASHBIN_REFRESH_TOKEN_TTL` | no | `P14D` | Sliding expiry per token. |

@@ -39,7 +39,7 @@ public class ProblemResponseWriter {
         return Problems.of(ErrorCode.FORBIDDEN, "You are not allowed to do this.");
     }
 
-    private void write(HttpServletResponse response, ProblemDetail problem) throws IOException {
+    public void write(HttpServletResponse response, ProblemDetail problem) throws IOException {
         response.setStatus(problem.getStatus());
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
         objectMapper.writeValue(response.getOutputStream(), problem);

@@ -6,8 +6,8 @@ Trash Bin is a hybrid **digital archive + digital memory** web application. You 
 longer actively need but may want again. Trash Bin preserves the original bytes, plus your notes,
 tags and context, so you can search, preview, download, restore and rediscover them later.
 
-**Project status:** `M0 — foundation`. Backend and frontend skeletons run end to end (health endpoint and
-status page). Authentication and file management are not implemented yet. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
+**Project status:** `M1 — authentication` complete. Accounts, sign-in with rotating sessions and account
+settings work end to end. File management starts with M2. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 
 ---
 
@@ -100,8 +100,9 @@ Copy-Item frontend\.env.example frontend\.env.local # optional: BACKEND_URL defa
 ```
 
 `.env` files are git-ignored. The full variable reference is in
-[docs/SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md#9-configuration-reference). Authentication
-secrets (`TRASHBIN_JWT_SECRET`, `TRASHBIN_TICKET_SECRET`) are introduced with M1.
+[docs/SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md#9-configuration-reference). `TRASHBIN_JWT_SECRET`
+is required (the generation command is in `backend/.env.example`); the backend refuses to start without
+a valid one.
 
 ### 4. Run
 

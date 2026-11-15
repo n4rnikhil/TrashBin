@@ -86,8 +86,9 @@
 
 The backend sits behind the Next.js proxy, so the TCP peer is always loopback. Per-IP throttling and
 the `refresh_tokens.ip_address` column are meaningful only if the backend honors `X-Forwarded-For`
-**from trusted proxies only** (`TRASHBIN_TRUSTED_PROXIES`, default loopback). Use Spring's forwarded
-header handling with that allowlist; never trust the header from arbitrary peers. Verified in M1.
+**from trusted proxies only**. The backend uses Tomcat's forwarded-header support
+(`server.forward-headers-strategy=native`), which by default trusts only loopback and private-range
+peers; the header from any other peer is ignored.
 
 ### 3.6 CSRF and CORS
 

@@ -28,6 +28,9 @@ spring:
 
 server:
   port: 8080
+  # Honor X-Forwarded-For from the Next.js proxy. Tomcat only trusts loopback/private peers by
+  # default, so the header cannot be spoofed from outside.
+  forward-headers-strategy: native
   error:
     include-message: never
     include-binding-errors: never
@@ -53,3 +56,17 @@ springdoc:
 trashbin:
   storage:
     root: ${TRASHBIN_STORAGE_ROOT}
+  auth:
+    jwt-secret: ${TRASHBIN_JWT_SECRET}
+    access-token-ttl: ${TRASHBIN_ACCESS_TOKEN_TTL:PT10M}
+    refresh-token-ttl: ${TRASHBIN_REFRESH_TOKEN_TTL:P14D}
+    refresh-token-max-age: ${TRASHBIN_REFRESH_TOKEN_MAX_AGE:P30D}
+    refresh-reuse-grace: PT20S
+    cookie-secure: ${TRASHBIN_COOKIE_SECURE:false}
+    registration-enabled: ${TRASHBIN_REGISTRATION_ENABLED:true}
+    allowed-origin: ${TRASHBIN_ALLOWED_ORIGIN:http://localhost:3000}
+    rate-limit-per-minute: ${TRASHBIN_AUTH_RATE_LIMIT_PER_MINUTE:10}
+    bcrypt-cost: 12
+    max-failed-logins: 5
+    lock-duration: PT15M
+    bootstrap-admin-email: ${TRASHBIN_BOOTSTRAP_ADMIN_EMAIL:}

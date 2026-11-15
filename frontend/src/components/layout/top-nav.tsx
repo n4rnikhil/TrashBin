@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UserMenu } from "@/features/auth";
 import { BackendStatusIndicator } from "@/features/status";
 import { findNavItem } from "./nav-config";
 
@@ -33,7 +34,8 @@ export function TopNav() {
         </Breadcrumb>
       ) : null}
       <div className="ml-auto flex items-center gap-1">
-        <BackendStatusIndicator />
+        <BackendStatusIndicator className="hidden sm:inline-flex" />
+        <UserMenu />
       </div>
     </header>
   );

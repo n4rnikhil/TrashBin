@@ -145,7 +145,7 @@ Legend: `NN` NOT NULL · `UQ` unique · `FK` foreign key. Only constraints worth
 | Column | Type | Constraints / notes |
 |---|---|---|
 | `id` | uuid | PK |
-| `email` | citext | NN, UQ (case-insensitive) |
+| `email` | varchar(254) | NN, UQ. Stored lower-cased by the application; `CHECK (email = lower(email))` |
 | `display_name` | varchar(100) | NN |
 | `password_hash` | varchar(255) | NN. `{bcrypt}`-prefixed (DelegatingPasswordEncoder) |
 | `role` | varchar(20) | NN, CHECK in (`USER`, `ADMIN`) |
@@ -162,7 +162,7 @@ Legend: `NN` NOT NULL · `UQ` unique · `FK` foreign key. Only constraints worth
 | `id` | uuid | PK |
 | `user_id` | uuid | NN, FK → `users` ON DELETE CASCADE |
 | `family_id` | uuid | NN. One family per login; all rotations share it |
-| `token_hash` | char(64) | NN, UQ. Hex SHA-256 of the opaque token. **The token itself is never stored** |
+| `token_hash` | varchar(64) | NN, UQ, CHECK 64 hex chars. Hex SHA-256 of the opaque token. **The token itself is never stored** |
 | `issued_at` | timestamptz | NN |
 | `expires_at` | timestamptz | NN. Sliding (per token) |
 | `family_expires_at` | timestamptz | NN. Absolute cap, copied unchanged through rotations |
@@ -170,7 +170,7 @@ Legend: `NN` NOT NULL · `UQ` unique · `FK` foreign key. Only constraints worth
 | `revoked_at` | timestamptz | set on logout / reuse detection / password change |
 | `replaced_by_id` | uuid | successor token in the chain |
 | `user_agent` | varchar(255) | informational, truncated |
-| `ip_address` | inet | informational (see [SECURITY_GUIDELINES §3.5](SECURITY_GUIDELINES.md#35-client-ip)) |
+| `ip_address` | varchar(45) | informational (see [SECURITY_GUIDELINES §3.5](SECURITY_GUIDELINES.md#35-client-ip)) |
 
 Indexes: `(user_id)`, `(family_id)`, `(expires_at)` (cleanup job).
 

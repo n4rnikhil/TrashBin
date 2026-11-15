@@ -10,8 +10,13 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "Validation failed"),
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "Authentication required"),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Invalid credentials"),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Session expired"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden"),
+    REGISTRATION_DISABLED(HttpStatus.FORBIDDEN, "Registration disabled"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Not found"),
+    EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "Email already registered"),
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "Too many requests"),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error");
 
     private final HttpStatus status;

@@ -51,10 +51,10 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 | Method & path | Auth | MS | Description | Success | Notable errors |
 |---|---|---|---|---|---|
 | `GET /users/me` | B | M1 | Current profile. | 200 `UserProfile` | – |
-| `PATCH /users/me` | B | M1 | Update `displayName`. | 200 `UserProfile` | 400, 412 |
+| `PATCH /users/me` | B | M1 | Update `displayName`. | 200 `UserProfile` | 400 |
 | `POST /users/me/password` | B | M1 | Body: `ChangePasswordRequest`. Revokes all sessions. | 204 | 400, 401 `INVALID_CREDENTIALS` |
 | `GET /users/me/sessions` | B | M1 | Active token families. | 200 `SessionInfo[]` | – |
-| `DELETE /users/me/sessions/{familyId}` | B | M1 | Revoke one session. | 204 | 404 |
+| `DELETE /users/me/sessions/{sessionId}` | B | M1 | Revoke one of your own sessions (`SessionInfo.id`). | 204 | 404 |
 
 ### 2.3 Files (`/files`)
 
