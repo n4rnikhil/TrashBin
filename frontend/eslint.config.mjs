@@ -20,6 +20,11 @@ const eslintConfig = defineConfig([
               group: ["@/features/*/*"],
               message: "Import features through their public index.ts only.",
             },
+            {
+              group: ["@/dev/*", "@/dev/**"],
+              message:
+                "Static design fixtures are for the /design style guide only, never real UI.",
+            },
           ],
         },
       ],
@@ -28,6 +33,23 @@ const eslintConfig = defineConfig([
   {
     // Inside a feature, relative imports of its own files are fine.
     files: ["src/features/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/dev/*", "@/dev/**"],
+              message: "Static design fixtures are for the /design style guide only.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The development style guide is the only consumer of static fixtures.
+    files: ["src/app/(dev)/**", "src/dev/**"],
     rules: { "no-restricted-imports": "off" },
   },
   prettier,

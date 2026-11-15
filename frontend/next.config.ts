@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
     rules: {
       "*.css": {
+        // Only our own stylesheets: Next internals (e.g. next/font CSS) must not go through Tailwind.
+        condition: { not: "foreign" },
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

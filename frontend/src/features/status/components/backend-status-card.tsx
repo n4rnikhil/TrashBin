@@ -1,19 +1,16 @@
 "use client";
 
 import { CircleAlert, CircleCheck, CircleX, Loader2, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getBackendStatus, type BackendStatus } from "../api/get-health";
-
-type ViewState = { kind: "loading" } | BackendStatus;
+import { useBackendStatus } from "../hooks/use-backend-status";
 
 const LABELS = {
-  loading: { text: "Checking…", Icon: Loader2 },
-  up: { text: "Operational", Icon: CircleCheck },
-  degraded: { text: "Degraded", Icon: CircleAlert },
-  unreachable: { text: "Unreachable", Icon: CircleX },
+  loading: { text: "Checking…", Icon: Loader2, variant: "secondary" },
+  up: { text: "Operational", Icon: CircleCheck, variant: "success" },
+  degraded: { text: "Degraded", Icon: CircleAlert, variant: "warning" },
+  unreachable: { text: "Unreachable", Icon: CircleX, variant: "destructive" },
 } as const;
 
 const DESCRIPTIONS = {
@@ -23,30 +20,12 @@ const DESCRIPTIONS = {
   unreachable: "The backend could not be reached. Is it running on the configured BACKEND_URL?",
 } as const;
 
-export function BackendStatusCard() {
-  const [state, setState] = useState<ViewState>({ kind: "loading" });
-
-  const refresh = useCallback(async (signal?: AbortSignal) => {
-    setState({ kind: "loading" });
-    const result = await getBackendStatus(signal);
-    if (!signal?.aborted) setState(result);
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    // Initial probe; later probes come from the Refresh button.
-    void getBackendStatus(controller.signal).then((result) => {
-      if (!controller.signal.aborted) setState(result);
-    });
-    return () => controller.abort();
-  }, []);
-
-  const { text, Icon } = LABELS[state.kind];
-  const variant =
-    state.kind === "up" ? "default" : state.kind === "loading" ? "secondary" : "destructive";
+export function BackendStatusCard({ className }: { className?: string }) {
+  const { state, refresh } = useBackendStatus();
+  const { text, Icon, variant } = LABELS[state.kind];
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-4">
           Backend status
@@ -58,7 +37,7 @@ export function BackendStatusCard() {
         <CardDescription>{DESCRIPTIONS[state.kind]}</CardDescription>
       </CardHeader>
       <CardContent className="flex items-center justify-between gap-4">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-muted-foreground type-caption">
           {state.kind === "up" || state.kind === "degraded"
             ? `Database: ${state.health.database}`
             : " "}
