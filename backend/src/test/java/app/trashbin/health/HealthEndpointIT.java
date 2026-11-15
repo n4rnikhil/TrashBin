@@ -46,7 +46,13 @@ class HealthEndpointIT {
     }
 
     @Test
-    void everythingElseIsDeniedByDefault() throws Exception {
-        mockMvc.perform(get("/api/v1/files")).andExpect(status().isUnauthorized());
+    void everythingElseIsDeniedByDefaultWithAProblemDocument() throws Exception {
+        mockMvc.perform(get("/api/v1/files"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().string("Content-Type", "application/problem+json"))
+                .andExpect(header().exists("X-Trace-Id"))
+                .andExpect(jsonPath("$.code").value("UNAUTHENTICATED"))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.traceId").isNotEmpty());
     }
 }

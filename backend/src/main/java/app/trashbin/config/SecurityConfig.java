@@ -1,14 +1,12 @@
 package app.trashbin.config;
 
+import app.trashbin.common.error.ProblemResponseWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 
 /**
@@ -21,12 +19,12 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, ProblemResponseWriter problems)
+            throws Exception {
         http
                 // Stateless bearer-token API: no cookie session to forge requests against.
                 // Cookie-authenticated endpoints (refresh/logout) get explicit guards in M1.
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -46,8 +44,8 @@ public class SecurityConfig {
                                         .authenticated())
                 .exceptionHandling(
                         e ->
-                                e.authenticationEntryPoint(
-                                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                e.authenticationEntryPoint(problems.authenticationEntryPoint())
+                                        .accessDeniedHandler(problems.accessDeniedHandler()))
                 .headers(h -> h.referrerPolicy(r -> r.policy(ReferrerPolicy.NO_REFERRER)));
         return http.build();
     }
