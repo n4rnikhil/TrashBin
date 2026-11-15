@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.trashbin.support.MutableClock;
 import app.trashbin.support.TestClockConfig;
+import app.trashbin.support.TestData;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -46,8 +47,7 @@ class AuthFlowIT {
 
     @BeforeEach
     void cleanDatabase() {
-        jdbc.update("delete from refresh_tokens");
-        jdbc.update("delete from users");
+        TestData.resetDatabase(jdbc);
     }
 
     // ---------------------------------------------------------------- registration

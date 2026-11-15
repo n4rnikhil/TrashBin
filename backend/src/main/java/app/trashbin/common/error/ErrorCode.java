@@ -16,6 +16,11 @@ public enum ErrorCode {
     REGISTRATION_DISABLED(HttpStatus.FORBIDDEN, "Registration disabled"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Not found"),
     EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "Email already registered"),
+    DUPLICATE_FILE(HttpStatus.CONFLICT, "Duplicate file"),
+    FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "File too large"),
+    QUOTA_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "Storage quota exceeded"),
+    UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported file type"),
+    FILE_SIGNATURE_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "File content does not match"),
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "Too many requests"),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error");
 

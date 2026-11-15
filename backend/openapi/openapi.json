@@ -30,6 +30,97 @@
         }
       }
     },
+    "/api/v1/files" : {
+      "get" : {
+        "tags" : [ "file-controller" ],
+        "operationId" : "list",
+        "parameters" : [ {
+          "name" : "status",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "ARCHIVED"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 25,
+            "maximum" : 100,
+            "minimum" : 1
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "archivedAt,desc"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponseFileSummary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "file-controller" ],
+        "operationId" : "upload",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  },
+                  "metadata" : {
+                    "$ref" : "#/components/schemas/UploadMetadata"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/register" : {
       "post" : {
         "tags" : [ "auth-controller" ],
@@ -142,6 +233,24 @@
         }
       }
     },
+    "/api/v1/admin/storage/reconcile" : {
+      "post" : {
+        "tags" : [ "storage-admin-controller" ],
+        "operationId" : "reconcile",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Report"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/me" : {
       "get" : {
         "tags" : [ "user-controller" ],
@@ -225,6 +334,33 @@
         }
       }
     },
+    "/api/v1/files/{id}" : {
+      "get" : {
+        "tags" : [ "file-controller" ],
+        "operationId" : "get",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/me/sessions/{sessionId}" : {
       "delete" : {
         "tags" : [ "account-security-controller" ],
@@ -263,6 +399,101 @@
           }
         },
         "required" : [ "currentPassword", "newPassword" ]
+      },
+      "UploadMetadata" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "notes" : {
+            "type" : "string",
+            "maxLength" : 10000,
+            "minLength" : 0
+          },
+          "contextNote" : {
+            "type" : "string",
+            "maxLength" : 2000,
+            "minLength" : 0
+          },
+          "originDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "allowDuplicate" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "FileDetail" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "originalFilename" : {
+            "type" : "string"
+          },
+          "mediaType" : {
+            "type" : "string"
+          },
+          "typeGroup" : {
+            "type" : "string"
+          },
+          "sizeBytes" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "sha256" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "favorite" : {
+            "type" : "boolean"
+          },
+          "notes" : {
+            "type" : "string"
+          },
+          "contextNote" : {
+            "type" : "string"
+          },
+          "originDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastAccessedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "discardedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "purgeAfter" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "version" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
       },
       "RegisterRequest" : {
         "type" : "object",
@@ -335,6 +566,23 @@
         },
         "required" : [ "email", "password" ]
       },
+      "Report" : {
+        "type" : "object",
+        "properties" : {
+          "stagingFilesRemoved" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "orphanBlobsRemoved" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "missingBlobs" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "UpdateProfileRequest" : {
         "type" : "object",
         "properties" : {
@@ -378,6 +626,69 @@
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "FileSummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "mediaType" : {
+            "type" : "string"
+          },
+          "typeGroup" : {
+            "type" : "string"
+          },
+          "sizeBytes" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "favorite" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "originDate" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }
+      },
+      "PageResponseFileSummary" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FileSummary"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       }

@@ -27,7 +27,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
     label: "Workspace",
     items: [
       { title: "Overview", href: "/dashboard", icon: LayoutDashboard, status: "available" },
-      { title: "Archive", href: "/archive", icon: Archive, status: "planned", milestone: "M2" },
+      { title: "Archive", href: "/archive", icon: Archive, status: "available" },
       {
         title: "Collections",
         href: "/collections",
@@ -57,6 +57,8 @@ export const NAV_GROUPS: readonly NavGroup[] = [
 
 /** Finds the nav entry for a pathname (exact match or nested route). */
 export function findNavItem(pathname: string): { group: NavGroup; item: NavItem } | undefined {
+  // File detail pages live under the Archive section.
+  if (pathname.startsWith("/files/")) return findNavItem("/archive");
   for (const group of NAV_GROUPS) {
     for (const item of group.items) {
       if (pathname === item.href || pathname.startsWith(`${item.href}/`)) return { group, item };

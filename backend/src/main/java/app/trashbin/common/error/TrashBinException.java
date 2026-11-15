@@ -1,5 +1,7 @@
 package app.trashbin.common.error;
 
+import java.util.Map;
+
 /**
  * Base class for expected, contract-level failures. The message is safe to show to API clients:
  * never put secrets, identifiers of other users, or internal details in it.
@@ -17,5 +19,10 @@ public abstract class TrashBinException extends RuntimeException {
 
     public ErrorCode code() {
         return code;
+    }
+
+    /** Extra, client-safe members added to the problem document (e.g. the existing duplicate). */
+    public Map<String, Object> properties() {
+        return Map.of();
     }
 }

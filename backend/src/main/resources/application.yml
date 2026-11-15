@@ -18,10 +18,6 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
-  servlet:
-    multipart:
-      max-file-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
-      max-request-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
   mvc:
     problemdetails:
       enabled: true
@@ -56,6 +52,10 @@ springdoc:
 trashbin:
   storage:
     root: ${TRASHBIN_STORAGE_ROOT}
+  upload:
+    max-file-size: ${TRASHBIN_MAX_FILE_SIZE_MB:250}MB
+    user-quota: ${TRASHBIN_USER_QUOTA_GB:5}GB
+    blocked-extensions: ${TRASHBIN_BLOCKED_EXTENSIONS:}
   auth:
     jwt-secret: ${TRASHBIN_JWT_SECRET}
     access-token-ttl: ${TRASHBIN_ACCESS_TOKEN_TTL:PT10M}

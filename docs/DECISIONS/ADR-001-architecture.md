@@ -155,8 +155,8 @@ These adjust the approved plan and are reflected consistently in all documents:
 | 1 | **Spring Boot version.** ~~Confirm 3.x support.~~ **Resolved 2026-11-15:** pinned to **3.5.16**, the newest 3.x published on Maven Central (OSS patch releases are still flowing). The official end-of-support date was not independently confirmed; re-check before v1.0 and plan a move to 4.x if the 3.5 line stops receiving fixes. | M0 | Done. |
 | 2 | **Admin bootstrap and password recovery.** **Bootstrap resolved in M1:** the account registering with `TRASHBIN_BOOTSTRAP_ADMIN_EMAIL` becomes `ADMIN`. **Still open:** recovery for a user who forgot their password (no email in v1). | recovery: before v1.0 | Originally recommended: `TRASHBIN_BOOTSTRAP_ADMIN_EMAIL` promotes the matching registrant; recovery via an admin CLI/profile command that sets a new password and revokes sessions. |
 | 3 | **PDF preview strategy (ADR-004).** Browser-native PDF viewers do not render under a CSP `sandbox`. | M4 | Spike native viewing with an adjusted CSP for PDFs versus bundling a viewer (new dependency); PDFs are download-only until decided. |
-| 4 | **Upload via Next proxy.** Body buffering and proxy timeouts for ≤ 250 MB uploads. | M0 spike | If unsuitable: streaming Route Handler proxy, or direct-to-backend upload with an explicit CORS allowlist (amending AD-2). |
-| 5 | **Line-ending policy file.** A `.gitattributes` is required to keep `mvnw` LF and `*.cmd` CRLF on Windows. | M0 | Add `.gitattributes` in M0. |
+| 4 | **Upload via Next proxy.** **Resolved in M2:** the rewrite proxy truncates bodies over 10 MB, so `/api/v1/files` uses a streaming route handler instead; single origin kept (AD-2 unchanged). | Done | — |
+| 5 | **Line-ending policy file.** **Resolved:** `.gitattributes` added in the M0 review. | Done | — |
 | 6 | **Project license.** | before publishing | Product owner to choose. |
 
 ## 7. Review

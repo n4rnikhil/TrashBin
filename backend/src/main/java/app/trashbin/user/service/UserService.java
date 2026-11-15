@@ -133,6 +133,15 @@ public class UserService {
         log.info("Password changed for user {}", user.getId());
     }
 
+    /**
+     * Takes a row lock on the account for the rest of the caller's transaction. Used to serialize
+     * one user's quota-affecting writes.
+     */
+    @Transactional
+    public void lockAccount(UUID userId) {
+        users.findByIdForUpdate(userId).orElseThrow(ResourceNotFoundException::new);
+    }
+
     private User require(AuthenticatedUser caller) {
         return users.findById(caller.id()).orElseThrow(ResourceNotFoundException::new);
     }

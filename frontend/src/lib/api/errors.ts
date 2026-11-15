@@ -9,6 +9,8 @@ export class ApiError extends Error {
     message: string,
     readonly traceId?: string,
     readonly fieldErrors: readonly FieldError[] = [],
+    /** The full problem document, for endpoint-specific members (e.g. `existing`). */
+    readonly problem: Readonly<Record<string, unknown>> = {},
   ) {
     super(message);
     this.name = "ApiError";
@@ -30,7 +32,29 @@ function parseFieldErrors(value: unknown): FieldError[] {
   );
 }
 
-/** Builds an ApiError from a non-OK response. Never throws; tolerates non-JSON bodies. */
+/** Builds an ApiError from a status and an already-parsed (or unparseable) body. */
+export function apiErrorFrom(status: number, body: unknown): ApiError {
+  if (!isRecord(body)) return new ApiError(status, "UNKNOWN", FALLBACK_MESSAGE);
+  return new ApiError(
+    status,
+    typeof body["code"] === "string" ? body["code"] : "UNKNOWN",
+    typeof body["detail"] === "string" ? body["detail"] : FALLBACK_MESSAGE,
+    typeof body["traceId"] === "string" ? body["traceId"] : undefined,
+    parseFieldErrors(body["errors"]),
+    body,
+  );
+}
+
+/** Parses a response body text that may or may not be JSON. */
+export function parseJsonSafely(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+}
+
+/** Builds an ApiError from a non-OK fetch response. Never throws. */
 export async function toApiError(response: Response): Promise<ApiError> {
   let body: unknown;
   try {
@@ -38,14 +62,7 @@ export async function toApiError(response: Response): Promise<ApiError> {
   } catch {
     body = undefined;
   }
-  if (!isRecord(body)) return new ApiError(response.status, "UNKNOWN", FALLBACK_MESSAGE);
-  return new ApiError(
-    response.status,
-    typeof body["code"] === "string" ? body["code"] : "UNKNOWN",
-    typeof body["detail"] === "string" ? body["detail"] : FALLBACK_MESSAGE,
-    typeof body["traceId"] === "string" ? body["traceId"] : undefined,
-    parseFieldErrors(body["errors"]),
-  );
+  return apiErrorFrom(response.status, body);
 }
 
 /** Message safe to show a user for any thrown value. */

@@ -61,7 +61,7 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 | Method & path | Auth | MS | Description | Success | Notable errors |
 |---|---|---|---|---|---|
 | `POST /files` | B | M2 | Multipart upload (§3.1). | 201 `FileDetail` | 400, 409 `DUPLICATE_FILE`, 413 `FILE_TOO_LARGE`, 413 `QUOTA_EXCEEDED`, 415 `UNSUPPORTED_MEDIA_TYPE`, 422 `FILE_SIGNATURE_MISMATCH` |
-| `GET /files` | B | M2/M3 | List/search (§3.2). | 200 `PageResponse<FileSummary>` | 400 |
+| `GET /files` | B | M2/M3 | List (M2: `status`, `page`, `size`, `sort`); search and filters (§3.2) arrive in M3. | 200 `PageResponse<FileSummary>` | 400 |
 | `GET /files/{id}` | B | M2 | Detail. Includes `ETag`. | 200 `FileDetail` | 404 |
 | `PATCH /files/{id}` | B | M3 | Edit metadata (allowed in both `ARCHIVED` and `DISCARDED`); requires `If-Match`. | 200 `FileDetail` | 400, 404, 412 |
 | `PUT /files/{id}/tags` | B | M3 | Replace the tag set (creates unknown tags). Body `{ "tags": ["name", …] }` (≤ 20). | 200 `FileDetail` | 400, 404 |
@@ -219,7 +219,9 @@ paths, or secrets.
 ## 5. DTO shapes
 
 Request and response DTOs are immutable Java records; entities are never serialized. Representative
-shapes (full schemas live in the OpenAPI snapshot). Example values are fictional.
+shapes (full schemas live in the OpenAPI snapshot). Example values are fictional. Fields are added in the
+milestone that implements them: `tags`, `collections`, `previewable` and `extractionStatus` are not part
+of the M2 responses yet, and the upload metadata accepts `tags`/`collectionIds` only from M3.
 
 ```jsonc
 // RegisterRequest

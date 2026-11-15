@@ -6,7 +6,6 @@ import app.trashbin.common.error.ProblemResponseWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,7 +21,6 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
  * admin-only.
  */
 @Configuration(proxyBeanMethods = false)
-@EnableScheduling
 public class SecurityConfig {
 
     @Bean
@@ -56,7 +54,7 @@ public class SecurityConfig {
                                                 "/swagger-ui.html",
                                                 "/swagger-ui/**")
                                         .permitAll()
-                                        .requestMatchers("/actuator/**")
+                                        .requestMatchers("/actuator/**", "/api/v1/admin/**")
                                         .hasRole("ADMIN")
                                         .anyRequest()
                                         .authenticated())

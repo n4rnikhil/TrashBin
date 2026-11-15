@@ -121,8 +121,10 @@ filters live in the URL; business rules are never duplicated from the backend, o
 `/api` routes. The proxy must forward `Origin`, `Cookie`, `Authorization` and `X-Forwarded-For`; this
 is **assumed, not yet verified**, and is checked in the M0 spike.
 
-> **Open verification (M0):** large multipart uploads and slow requests through the Next.js proxy
-> (default proxy timeout, body buffering). See [DEVELOPMENT_ROADMAP M0](DEVELOPMENT_ROADMAP.md#m0--foundation).
+**Exception: `/api/v1/files`.** The rewrite proxy buffers request bodies in memory and truncates them
+beyond 10 MB, which breaks large uploads (found by the M2 spike). That one path is served by a streaming
+route handler (`frontend/src/app/api/v1/files/route.ts`) that pipes the body to the backend. Measured:
+a 200 MB upload completes in ~2.5 s locally with flat memory in both processes.
 
 ## 4. Runtime flows
 

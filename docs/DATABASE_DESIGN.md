@@ -186,7 +186,7 @@ Indexes: `(user_id)`, `(family_id)`, `(expires_at)` (cleanup job).
 | `declared_media_type` | varchar(255) | client-declared type, kept for diagnostics only |
 | `type_group` | varchar(20) | NN, CHECK in (`IMAGE`, `DOCUMENT`, `SPREADSHEET`, `PRESENTATION`, `TEXT`, `AUDIO`, `VIDEO`, `ARCHIVE`, `OTHER`). Derived from `media_type` at upload; makes filtering indexable |
 | `size_bytes` | bigint | NN, CHECK `>= 0` |
-| `sha256` | char(64) | NN, CHECK `~ '^[0-9a-f]{64}$'`. Server-computed |
+| `sha256` | varchar(64) | NN, CHECK `~ '^[0-9a-f]{64}$'`. Server-computed |
 | `storage_key` | uuid | NN, UQ. The only value that maps to a disk path |
 | `status` | varchar(20) | NN, CHECK in (`ARCHIVED`, `DISCARDED`) |
 | `extraction_status` | varchar(20) | NN, CHECK in (`PENDING`, `DONE`, `SKIPPED`, `FAILED`) |

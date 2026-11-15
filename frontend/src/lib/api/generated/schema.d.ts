@@ -20,6 +20,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/register": {
         parameters: {
             query?: never;
@@ -100,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/storage/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/me": {
         parameters: {
             query?: never;
@@ -148,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/files/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/me/sessions/{sessionId}": {
         parameters: {
             query?: never;
@@ -172,6 +220,43 @@ export interface components {
             currentPassword: string;
             newPassword: string;
         };
+        UploadMetadata: {
+            displayName?: string;
+            notes?: string;
+            contextNote?: string;
+            /** Format: date */
+            originDate?: string;
+            allowDuplicate?: boolean;
+        };
+        FileDetail: {
+            /** Format: uuid */
+            id?: string;
+            displayName?: string;
+            originalFilename?: string;
+            mediaType?: string;
+            typeGroup?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            sha256?: string;
+            status?: string;
+            favorite?: boolean;
+            notes?: string;
+            contextNote?: string;
+            /** Format: date */
+            originDate?: string;
+            /** Format: date-time */
+            archivedAt?: string;
+            /** Format: date-time */
+            lastAccessedAt?: string;
+            /** Format: date-time */
+            discardedAt?: string;
+            /** Format: date-time */
+            purgeAfter?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         RegisterRequest: {
             /** Format: email */
             email: string;
@@ -195,6 +280,14 @@ export interface components {
             email: string;
             password: string;
         };
+        Report: {
+            /** Format: int32 */
+            stagingFilesRemoved?: number;
+            /** Format: int32 */
+            orphanBlobsRemoved?: number;
+            /** Format: int32 */
+            missingBlobs?: number;
+        };
         UpdateProfileRequest: {
             displayName: string;
         };
@@ -212,6 +305,32 @@ export interface components {
             database?: string;
             /** Format: date-time */
             timestamp?: string;
+        };
+        FileSummary: {
+            /** Format: uuid */
+            id?: string;
+            displayName?: string;
+            mediaType?: string;
+            typeGroup?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            status?: string;
+            favorite?: boolean;
+            /** Format: date-time */
+            archivedAt?: string;
+            /** Format: date */
+            originDate?: string;
+        };
+        PageResponseFileSummary: {
+            content?: components["schemas"]["FileSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
     };
     responses: never;
@@ -241,6 +360,59 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query?: {
+                status?: string;
+                page?: number;
+                size?: number;
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseFileSummary"];
+                };
+            };
+        };
+    };
+    upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    metadata?: components["schemas"]["UploadMetadata"];
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileDetail"];
+                };
             };
         };
     };
@@ -352,6 +524,26 @@ export interface operations {
             };
         };
     };
+    reconcile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Report"];
+                };
+            };
+        };
+    };
     me: {
         parameters: {
             query?: never;
@@ -432,6 +624,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["FileDetail"];
                 };
             };
         };

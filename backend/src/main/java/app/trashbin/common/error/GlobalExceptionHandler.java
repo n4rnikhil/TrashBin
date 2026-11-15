@@ -58,6 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TrashBinException.class)
     ResponseEntity<ProblemDetail> handleExpected(TrashBinException ex) {
         ProblemDetail problem = Problems.of(ex.code(), ex.getMessage());
+        ex.properties().forEach(problem::setProperty);
         ResponseEntity.BodyBuilder builder = ResponseEntity.status(problem.getStatus());
         if (ex instanceof TooManyRequestsException throttled) {
             builder.header(HttpHeaders.RETRY_AFTER, String.valueOf(throttled.retryAfterSeconds()));
@@ -109,6 +110,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             case 401 -> ErrorCode.UNAUTHENTICATED;
             case 403 -> ErrorCode.FORBIDDEN;
             case 404 -> ErrorCode.NOT_FOUND;
+            case 413 -> ErrorCode.FILE_TOO_LARGE;
+            case 415 -> ErrorCode.UNSUPPORTED_MEDIA_TYPE;
             default -> null;
         };
     }

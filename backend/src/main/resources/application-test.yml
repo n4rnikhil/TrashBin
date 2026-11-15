@@ -18,3 +18,8 @@ trashbin:
     rate-limit-per-minute: 100000
     bcrypt-cost: 4
     bootstrap-admin-email: admin@example.com
+  upload:
+    max-file-size: 1MB
+    user-quota: 3MB
+    blocked-extensions: exe,.SCR
+

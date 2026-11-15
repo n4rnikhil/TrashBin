@@ -1,9 +1,9 @@
 import { Archive, Flame, Trash2, type LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { EmptyState } from "@/components/patterns/empty-state";
 import { PageHeader } from "@/components/patterns/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/typography";
+import { RecentFiles } from "@/features/files";
 import { BackendStatusCard } from "@/features/status";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -38,15 +38,11 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Your archive</CardTitle>
-            <CardDescription>Recently archived files will appear here.</CardDescription>
+            <CardTitle>Recently archived</CardTitle>
+            <CardDescription>The latest files you chose to keep.</CardDescription>
           </CardHeader>
           <CardContent>
-            <EmptyState
-              icon={Archive}
-              title="Your archive is empty"
-              description="Uploading arrives in the next milestone. Files you archive will be preserved, searchable and restorable."
-            />
+            <RecentFiles />
           </CardContent>
         </Card>
 
