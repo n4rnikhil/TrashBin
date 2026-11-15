@@ -228,8 +228,9 @@ paths, or secrets.
 
 Request and response DTOs are immutable Java records; entities are never serialized. Representative
 shapes (full schemas live in the OpenAPI snapshot). Example values are fictional. Fields are added in the
-milestone that implements them: `tags`, `favorite` (M3a) and `FileDetail.collections` (M3b) are
-live; `previewable` and `extractionStatus` arrive with M4. Upload metadata accepts `tags` and
+milestone that implements them: `tags`, `favorite` (M3a), `FileDetail.collections` (M3b),
+`previewable` (M4a) and `FileDetail.extractionStatus` (M4b: `PENDING`, `DONE`, `SKIPPED`, `FAILED`)
+are live. Search (`q`) also matches text extracted from file contents once a file is `DONE`. Upload metadata accepts `tags` and
 `collectionIds`. Date filters `from`/`to` are inclusive calendar dates in UTC.
 
 ```jsonc

@@ -990,6 +990,9 @@
           "previewable" : {
             "type" : "boolean"
           },
+          "extractionStatus" : {
+            "type" : "string"
+          },
           "notes" : {
             "type" : "string"
           },

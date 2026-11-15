@@ -1,12 +1,14 @@
 package app.trashbin.archive.repository;
 
 import app.trashbin.archive.domain.ArchivedFile;
+import app.trashbin.archive.domain.ExtractionStatus;
 import app.trashbin.common.persistence.OwnedEntityRepository;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,6 +43,23 @@ public interface ArchivedFileRepository
                     + " where f.id = :id and f.ownerId = :ownerId")
     int markAccessed(
             @Param("id") UUID id, @Param("ownerId") UUID ownerId, @Param("now") Instant now);
+
+    /** Status changes from background work must not bump the version (no edit conflicts). */
+    @Modifying
+    @Query(
+            "update ArchivedFile f set f.extractionStatus = :status"
+                    + " where f.id = :id and f.ownerId = :ownerId")
+    int setExtractionStatus(
+            @Param("id") UUID id,
+            @Param("ownerId") UUID ownerId,
+            @Param("status") ExtractionStatus status);
+
+    @Query(
+            "select new app.trashbin.archive.repository.PendingExtraction(f.id, f.ownerId)"
+                    + " from ArchivedFile f where f.extractionStatus = :status"
+                    + " order by f.archivedAt")
+    List<PendingExtraction> findByExtractionStatus(
+            @Param("status") ExtractionStatus status, Pageable pageable);
 
     @Query(
             "select new app.trashbin.archive.repository.StorageRef(f.id, f.storageKey)"

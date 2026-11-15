@@ -189,6 +189,10 @@ public class ArchivedFile {
         return status;
     }
 
+    public ExtractionStatus getExtractionStatus() {
+        return extractionStatus;
+    }
+
     public String getNotes() {
         return notes;
     }

@@ -34,6 +34,8 @@ export type TypeGroup =
   | "ARCHIVE"
   | "OTHER";
 export type FileStatus = "ARCHIVED" | "DISCARDED";
+/** Progress of text extraction for content search (M4b). */
+export type ExtractionStatus = "PENDING" | "DONE" | "SKIPPED" | "FAILED";
 
 export type TagRef = Nullable<Required<Schemas["TagRef"]>, "color">;
 export type TagSummary = Nullable<Required<Schemas["TagSummary"]>, "color">;
@@ -60,10 +62,10 @@ type Narrowed<T> = Omit<T, "typeGroup" | "status" | "tags"> & {
 export type FileSummary = Narrowed<Nullable<Required<Schemas["FileSummary"]>, "originDate">>;
 export type FileDetail = Narrowed<
   Nullable<
-    Omit<Required<Schemas["FileDetail"]>, "collections">,
+    Omit<Required<Schemas["FileDetail"]>, "collections" | "extractionStatus">,
     "notes" | "contextNote" | "originDate" | "lastAccessedAt" | "discardedAt" | "purgeAfter"
   >
-> & { collections: CollectionRef[] };
+> & { collections: CollectionRef[]; extractionStatus: ExtractionStatus };
 
 export type PageResponse<T> = {
   content: T[];

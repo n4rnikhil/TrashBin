@@ -19,6 +19,7 @@ public record FileDetail(
         String status,
         boolean favorite,
         boolean previewable,
+        String extractionStatus,
         String notes,
         String contextNote,
         LocalDate originDate,

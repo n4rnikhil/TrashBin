@@ -21,6 +21,11 @@ trashbin:
   content:
     # Test-only key (Base64), deliberately different from the JWT test key.
     ticket-secret: dGVzdC1vbmx5LXRpY2tldC1rZXktLWRpZmZlcmVudC1mcm9tLXRoZS1qd3Qta2V5IQ==
+  extraction:
+    # Tests trigger extraction explicitly so assertions never race a background thread.
+    background: false
+    max-input: 512KB
+    max-chars: 2000
   upload:
     max-file-size: 1MB
     user-quota: 3MB

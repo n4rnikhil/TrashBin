@@ -397,6 +397,7 @@ export interface components {
             status?: string;
             favorite?: boolean;
             previewable?: boolean;
+            extractionStatus?: string;
             notes?: string;
             contextNote?: string;
             /** Format: date */

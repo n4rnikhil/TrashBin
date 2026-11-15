@@ -40,6 +40,7 @@ public final class FileMapper {
                 f.getStatus().name(),
                 f.isFavorite(),
                 Previews.isPreviewable(f.getMediaType()),
+                f.getExtractionStatus().name(),
                 f.getNotes(),
                 f.getContextNote(),
                 f.getOriginDate(),

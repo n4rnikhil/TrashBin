@@ -211,7 +211,7 @@ uses a `pg_trgm` index. Details in [DATABASE_DESIGN §6](DATABASE_DESIGN.md#6-se
 
 | Job | Trigger | Behavior |
 |---|---|---|
-| Text extraction | after upload commit | Bounded executor; type allowlist; input/output/time caps; sets `extraction_status`. |
+| Text extraction | after upload commit, plus a sweep every minute | One worker thread with a bounded queue; parsing on 2 threads with a per-file timeout; type allowlist (PDF, Office, OpenDocument, RTF, text); input/character caps; sets `extraction_status` via bulk updates (no version change). Only the needed Tika parser modules are on the classpath. |
 | Retention purge | daily schedule | Purges `DISCARDED` rows with `purge_after < now`, in batches; logs a summary. |
 | Storage reconciler | hourly + admin-triggered | Removes old staging files and orphan blobs; reports missing blobs. |
 | Token cleanup | daily | Deletes expired refresh tokens. |

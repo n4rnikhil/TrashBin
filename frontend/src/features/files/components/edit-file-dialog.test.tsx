@@ -17,6 +17,7 @@ const file: FileDetail = {
   sha256: "0".repeat(64),
   status: "ARCHIVED",
   favorite: false,
+  extractionStatus: "DONE",
   previewable: false,
   notes: "old notes",
   contextNote: null,

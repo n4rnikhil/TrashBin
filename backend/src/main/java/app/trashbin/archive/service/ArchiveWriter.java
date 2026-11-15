@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class ArchiveWriter {
     private final SearchIndexer searchIndexer;
     private final ActivityService activity;
     private final UploadProperties properties;
+    private final ApplicationEventPublisher events;
     private final Clock clock;
 
     public ArchiveWriter(
@@ -47,6 +49,7 @@ public class ArchiveWriter {
             SearchIndexer searchIndexer,
             ActivityService activity,
             UploadProperties properties,
+            ApplicationEventPublisher events,
             Clock clock) {
         this.files = files;
         this.users = users;
@@ -55,6 +58,7 @@ public class ArchiveWriter {
         this.searchIndexer = searchIndexer;
         this.activity = activity;
         this.properties = properties;
+        this.events = events;
         this.clock = clock;
     }
 
@@ -92,6 +96,8 @@ public class ArchiveWriter {
                         : collections.replaceCollectionsOfFile(owner, file.getId(), collectionIds);
         searchIndexer.reindex(owner, List.of(file.getId()));
         activity.record(file.getId(), owner, FileEventType.ARCHIVED, Map.of());
+        // Picked up after commit by the text extractor (M4b).
+        events.publishEvent(new FileArchivedEvent(owner, file.getId()));
         return FileMapper.toDetail(file, fileTags, fileCollections);
     }
 }

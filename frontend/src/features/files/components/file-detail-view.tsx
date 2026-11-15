@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heading, Text } from "@/components/ui/typography";
 import { ApiError, errorMessage } from "@/lib/api/errors";
+import type { ExtractionStatus } from "@/lib/api/types";
 import { fileKeys, filesApi } from "../api/files-api";
 import { formatBytes, formatCalendarDate, formatDateTime } from "../format";
 import { DownloadButton } from "./download-button";
@@ -22,6 +23,14 @@ import { FileCollectionsCard } from "./file-collections-card";
 import { FilePreview } from "./file-preview";
 import { FileTagsCard } from "./file-tags-card";
 import { FileTypeIcon, TYPE_LABELS } from "./file-type-icon";
+
+/** What content search can do with this file. */
+export const EXTRACTION_LABELS: Record<ExtractionStatus, string> = {
+  PENDING: "Being indexed for search…",
+  DONE: "Searchable — text inside the file is included in search",
+  SKIPPED: "Not searchable by contents (type not supported or file too large)",
+  FAILED: "Could not read the text inside this file",
+};
 
 function BackLink() {
   return (
@@ -158,6 +167,7 @@ export function FileDetailView() {
             {f.originDate ? (
               <Row label="Origin date">{formatCalendarDate(f.originDate)}</Row>
             ) : null}
+            <Row label="Contents">{EXTRACTION_LABELS[f.extractionStatus]}</Row>
             <Row label="SHA-256">
               <code className="text-muted-foreground font-mono text-xs break-all">{f.sha256}</code>
             </Row>
