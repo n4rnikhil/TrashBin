@@ -10,19 +10,23 @@ import app.trashbin.archive.repository.ArchivedFileRepository;
 import app.trashbin.archive.service.UploadExceptions.DuplicateFileException;
 import app.trashbin.archive.service.UploadExceptions.QuotaExceededException;
 import app.trashbin.config.UploadProperties;
+import app.trashbin.tag.dto.TagDtos.TagRef;
+import app.trashbin.tag.service.TagService;
 import app.trashbin.user.service.UserService;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** The transactional half of an upload: quota, duplicate policy, row and activity event. */
+/** The transactional half of an upload: quota, duplicate policy, row, tags and activity event. */
 @Service
 public class ArchiveWriter {
 
     private final ArchivedFileRepository files;
     private final UserService users;
+    private final TagService tags;
     private final ActivityService activity;
     private final UploadProperties properties;
     private final Clock clock;
@@ -30,18 +34,20 @@ public class ArchiveWriter {
     public ArchiveWriter(
             ArchivedFileRepository files,
             UserService users,
+            TagService tags,
             ActivityService activity,
             UploadProperties properties,
             Clock clock) {
         this.files = files;
         this.users = users;
+        this.tags = tags;
         this.activity = activity;
         this.properties = properties;
         this.clock = clock;
     }
 
     @Transactional
-    public FileDetail persist(NewArchivedFile spec, boolean allowDuplicate) {
+    public FileDetail persist(NewArchivedFile spec, boolean allowDuplicate, List<String> tagNames) {
         // Serialize this user's uploads so two concurrent ones cannot both pass the quota check.
         users.lockAccount(spec.ownerId());
 
@@ -53,12 +59,17 @@ public class ArchiveWriter {
             files.findFirstByOwnerIdAndSha256OrderByArchivedAtAsc(spec.ownerId(), spec.sha256())
                     .ifPresent(
                             existing -> {
-                                throw new DuplicateFileException(FileMapper.toSummary(existing));
+                                throw new DuplicateFileException(
+                                        FileMapper.toSummary(existing, List.of()));
                             });
         }
 
         ArchivedFile file = files.saveAndFlush(new ArchivedFile(spec, Instant.now(clock)));
+        List<TagRef> fileTags =
+                tagNames.isEmpty()
+                        ? List.of()
+                        : tags.replaceFileTags(file.getOwnerId(), file.getId(), tagNames);
         activity.record(file.getId(), file.getOwnerId(), FileEventType.ARCHIVED, Map.of());
-        return FileMapper.toDetail(file);
+        return FileMapper.toDetail(file, fileTags);
     }
 }

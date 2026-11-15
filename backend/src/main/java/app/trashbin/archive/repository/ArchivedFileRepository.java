@@ -20,6 +20,9 @@ public interface ArchivedFileRepository
 
     Page<ArchivedFile> findByOwnerIdAndStatus(UUID ownerId, FileStatus status, Pageable pageable);
 
+    Page<ArchivedFile> findByOwnerIdAndStatusAndFavorite(
+            UUID ownerId, FileStatus status, boolean favorite, Pageable pageable);
+
     Optional<ArchivedFile> findFirstByOwnerIdAndSha256OrderByArchivedAtAsc(
             UUID ownerId, String sha256);
 

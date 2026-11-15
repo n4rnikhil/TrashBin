@@ -1,7 +1,9 @@
 package app.trashbin.archive.dto;
 
+import app.trashbin.tag.dto.TagDtos.TagRef;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,4 +19,5 @@ public record FileSummary(
         String status,
         boolean favorite,
         Instant archivedAt,
-        LocalDate originDate) {}
+        LocalDate originDate,
+        List<TagRef> tags) {}

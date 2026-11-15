@@ -66,6 +66,16 @@ class ArchitectureTest {
     static final ArchRule ownedEntitiesAreNeverLoadedByIdAlone =
             noClasses().should().callMethodWhere(ID_ONLY_LOOKUP_ON_OWNED_REPOSITORY);
 
+    /** Tags are a building block of the archive, never the other way round (no cycles). */
+    @ArchTest
+    static final ArchRule tagsDoNotDependOnTheArchive =
+            noClasses()
+                    .that()
+                    .resideInAPackage("app.trashbin.tag..")
+                    .should()
+                    .dependOnClassesThat()
+                    .resideInAPackage("app.trashbin.archive..");
+
     /** Storage must not know about the modules that use it (they implement StorageCatalog). */
     @ArchTest
     static final ArchRule storageDoesNotDependOnFeatureModules =

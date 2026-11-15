@@ -31,6 +31,7 @@ const summary: FileSummary = {
   favorite: false,
   archivedAt: "2026-11-15T10:00:00Z",
   originDate: null,
+  tags: [{ id: "t1", name: "housing", color: "#4F46E5" }],
 };
 
 function renderList() {

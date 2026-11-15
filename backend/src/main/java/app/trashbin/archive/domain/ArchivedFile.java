@@ -115,6 +115,40 @@ public class ArchivedFile {
         this.updatedAt = now;
     }
 
+    /** Applies a metadata edit; values are already validated. Returns whether anything changed. */
+    public boolean updateMetadata(
+            String newDisplayName,
+            String newNotes,
+            String newContextNote,
+            LocalDate newOriginDate,
+            Instant now) {
+        boolean changed =
+                !Objects.equals(displayName, newDisplayName)
+                        || !Objects.equals(notes, newNotes)
+                        || !Objects.equals(contextNote, newContextNote)
+                        || !Objects.equals(originDate, newOriginDate);
+        if (changed) {
+            this.displayName = newDisplayName;
+            this.notes = newNotes;
+            this.contextNote = newContextNote;
+            this.originDate = newOriginDate;
+            this.updatedAt = now;
+        }
+        return changed;
+    }
+
+    public void markFavorite(boolean newFavorite, Instant now) {
+        if (favorite != newFavorite) {
+            this.favorite = newFavorite;
+            this.updatedAt = now;
+        }
+    }
+
+    /** Records a change kept outside this row (e.g. tags) so the version and ETag move on. */
+    public void touch(Instant now) {
+        this.updatedAt = now;
+    }
+
     public UUID getId() {
         return id;
     }

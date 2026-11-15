@@ -35,7 +35,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
         status: "planned",
         milestone: "M3",
       },
-      { title: "Tags", href: "/tags", icon: Tags, status: "planned", milestone: "M3" },
+      { title: "Tags", href: "/tags", icon: Tags, status: "available" },
       {
         title: "Rediscover",
         href: "/rediscover",

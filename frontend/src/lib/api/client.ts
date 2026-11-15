@@ -87,6 +87,8 @@ export type ApiFetchOptions = {
   signal?: AbortSignal;
   /** Send the CSRF guard header (cookie-authenticated endpoints only). */
   cookieGuard?: boolean;
+  /** Extra request headers (e.g. If-Match). Auth and content headers are managed here. */
+  headers?: Record<string, string>;
 };
 
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
@@ -95,6 +97,7 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     return apiRequest(path, {
       method: options.method ?? "GET",
       headers: {
+        ...options.headers,
         ...(options.body !== undefined ? { "Content-Type": "application/json" } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.cookieGuard ? COOKIE_GUARD_HEADER : {}),

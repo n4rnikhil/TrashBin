@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +67,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return builder.body(problem);
     }
 
+    /** A concurrent edit committed first: same outcome as a stale If-Match. */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    ResponseEntity<ProblemDetail> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
+        return toResponse(
+                Problems.of(
+                        ErrorCode.VERSION_CONFLICT,
+                        "This item was changed in the meantime. Reload and try again."));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     ResponseEntity<ProblemDetail> handleAuthentication(AuthenticationException ex) {
         return toResponse(ProblemResponseWriter.unauthenticated());
@@ -110,6 +120,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             case 401 -> ErrorCode.UNAUTHENTICATED;
             case 403 -> ErrorCode.FORBIDDEN;
             case 404 -> ErrorCode.NOT_FOUND;
+            case 412 -> ErrorCode.VERSION_CONFLICT;
             case 413 -> ErrorCode.FILE_TOO_LARGE;
             case 415 -> ErrorCode.UNSUPPORTED_MEDIA_TYPE;
             default -> null;

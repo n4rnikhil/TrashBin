@@ -114,6 +114,9 @@ In addition to each milestone's own list, **every** milestone requires:
 
 ## M3 — Organize and search
 
+Delivered in two parts: **M3a** (tags, favorites, metadata editing — done) and **M3b** (collections,
+full-text search, filters).
+
 **Goal:** find things. Requirements: FR-O1 – FR-O6 (FR-O3 for metadata; content search completes in M4).
 
 **Scope**

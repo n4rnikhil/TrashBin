@@ -74,7 +74,8 @@ public class UploadService {
             FileDetail detail =
                     writer.persist(
                             spec(caller, fileName, file, meta, detection, staged, storageKey),
-                            meta.duplicatesAllowed());
+                            meta.duplicatesAllowed(),
+                            meta.tagNames());
             log.info("Archived file {} ({} bytes)", detail.id(), detail.sizeBytes());
             return detail;
         } catch (RuntimeException e) {

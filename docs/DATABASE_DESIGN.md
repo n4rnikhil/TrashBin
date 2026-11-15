@@ -328,6 +328,7 @@ removes its history; this is intentional and documented in the UI confirmation).
 | `V1__extensions.sql` | `citext`, `pg_trgm` | M0 |
 | `V2__users_and_refresh_tokens.sql` | auth tables | M1 |
 | `V3__archived_files_and_events.sql` | files, text content, events | M2 |
-| `V4__tags_and_collections.sql` | tags, collections, join tables | M3 |
-| `V5__search_indexes.sql` | GIN/trigram indexes | M3 |
-| `V6__lifecycle_indexes.sql` | retention/rediscover indexes | M5 |
+| `V4__tags.sql` | tags, file_tags (composite FKs), favorite index | M3a (done) |
+| `V5__collections.sql` | collections, collection_files | M3b |
+| `V6__search_indexes.sql` | GIN/trigram indexes, search vector upkeep | M3b |
+| `V7__lifecycle_indexes.sql` | retention/rediscover indexes | M5 |

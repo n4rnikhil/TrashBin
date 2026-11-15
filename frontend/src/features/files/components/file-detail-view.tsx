@@ -1,9 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileQuestion } from "lucide-react";
+import { ArrowLeft, FileQuestion, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { EmptyState } from "@/components/patterns/empty-state";
 import { CardSkeleton } from "@/components/patterns/skeletons";
@@ -14,6 +15,9 @@ import { Heading, Text } from "@/components/ui/typography";
 import { ApiError, errorMessage } from "@/lib/api/errors";
 import { fileKeys, filesApi } from "../api/files-api";
 import { formatBytes, formatCalendarDate, formatDateTime } from "../format";
+import { EditFileDialog } from "./edit-file-dialog";
+import { FavoriteButton } from "./favorite-button";
+import { FileTagsCard } from "./file-tags-card";
 import { FileTypeIcon, TYPE_LABELS } from "./file-type-icon";
 
 function BackLink() {
@@ -38,10 +42,11 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/** Read-only metadata of one file. Download, preview and editing arrive in later milestones. */
+/** One file: metadata, notes, tags and favorite. Download and preview arrive in M4. */
 export function FileDetailView() {
   const params = useParams<{ id: string }>();
   const id = params.id;
+  const [editing, setEditing] = useState(false);
   const file = useQuery({
     queryKey: fileKeys.detail(id),
     queryFn: ({ signal }) => filesApi.get(id, signal),
@@ -78,9 +83,9 @@ export function FileDetailView() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink />
-      <header className="flex items-start gap-4">
+      <header className="flex flex-wrap items-start gap-4">
         <FileTypeIcon typeGroup={f.typeGroup} size="lg" />
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <Heading level={1} variant="title" className="break-words">
             {f.displayName}
           </Heading>
@@ -92,7 +97,16 @@ export function FileDetailView() {
             <Badge variant="outline">{formatBytes(f.sizeBytes)}</Badge>
           </div>
         </div>
+        <div className="flex gap-2">
+          <FavoriteButton fileId={f.id} favorite={f.favorite} />
+          <Button variant="outline" onClick={() => setEditing(true)}>
+            <Pencil aria-hidden /> Edit details
+          </Button>
+        </div>
       </header>
+      <EditFileDialog file={f} open={editing} onOpenChange={setEditing} />
+
+      <FileTagsCard file={f} />
 
       {f.contextNote || f.notes ? (
         <Card>

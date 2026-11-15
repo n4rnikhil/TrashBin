@@ -7,8 +7,8 @@ Guidance for AI coding agents working in this repository. Humans: read [CONTRIBU
 Trash Bin: a digital archive + memory web app. Spring Boot 3.x (Java 21) modular monolith, Next.js
 (App Router, TypeScript strict) frontend, PostgreSQL + Flyway, local-filesystem blob storage.
 
-**Current status: M2 (storage and upload) complete; M3 (organize and search) is next.** Accounts,
-sessions, upload with signature/duplicate/quota checks, the archive list and file details exist. Check `docs/DEVELOPMENT_ROADMAP.md` for the active
+**Current status: M3a (tags, favorites, metadata editing) complete; M3b (collections, search,
+filters) is next.** Accounts, sessions, uploads, archive list, file details, tags and editing exist. Check `docs/DEVELOPMENT_ROADMAP.md` for the active
 milestone and **do not build features outside it**.
 
 ## Source-of-truth map

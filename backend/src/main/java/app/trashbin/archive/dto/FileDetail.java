@@ -1,10 +1,12 @@
 package app.trashbin.archive.dto;
 
+import app.trashbin.tag.dto.TagDtos.TagRef;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
-/** Full metadata of one file. */
+/** Full metadata of one file. {@code version} is also sent as the ETag for If-Match edits. */
 public record FileDetail(
         UUID id,
         String displayName,
@@ -18,6 +20,7 @@ public record FileDetail(
         String notes,
         String contextNote,
         LocalDate originDate,
+        List<TagRef> tags,
         Instant archivedAt,
         Instant lastAccessedAt,
         Instant discardedAt,

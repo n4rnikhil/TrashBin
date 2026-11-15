@@ -35,7 +35,18 @@ export type TypeGroup =
   | "OTHER";
 export type FileStatus = "ARCHIVED" | "DISCARDED";
 
-type Narrowed<T> = Omit<T, "typeGroup" | "status"> & { typeGroup: TypeGroup; status: FileStatus };
+export type TagRef = Nullable<Required<Schemas["TagRef"]>, "color">;
+export type TagSummary = Nullable<Required<Schemas["TagSummary"]>, "color">;
+export type CreateTagRequest = Schemas["CreateTagRequest"];
+export type UpdateTagRequest = Schemas["UpdateTagRequest"];
+/** Partial edit: omitted fields stay, "" clears notes/contextNote/originDate. */
+export type UpdateFileRequest = Schemas["UpdateFileRequest"];
+
+type Narrowed<T> = Omit<T, "typeGroup" | "status" | "tags"> & {
+  typeGroup: TypeGroup;
+  status: FileStatus;
+  tags: TagRef[];
+};
 
 export type FileSummary = Narrowed<Nullable<Required<Schemas["FileSummary"]>, "originDate">>;
 export type FileDetail = Narrowed<

@@ -63,7 +63,8 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 | `POST /files` | B | M2 | Multipart upload (§3.1). | 201 `FileDetail` | 400, 409 `DUPLICATE_FILE`, 413 `FILE_TOO_LARGE`, 413 `QUOTA_EXCEEDED`, 415 `UNSUPPORTED_MEDIA_TYPE`, 422 `FILE_SIGNATURE_MISMATCH` |
 | `GET /files` | B | M2/M3 | List (M2: `status`, `page`, `size`, `sort`); search and filters (§3.2) arrive in M3. | 200 `PageResponse<FileSummary>` | 400 |
 | `GET /files/{id}` | B | M2 | Detail. Includes `ETag`. | 200 `FileDetail` | 404 |
-| `PATCH /files/{id}` | B | M3 | Edit metadata (allowed in both `ARCHIVED` and `DISCARDED`); requires `If-Match`. | 200 `FileDetail` | 400, 404, 412 |
+| `PATCH /files/{id}` | B | M3 | Edit `displayName`, `notes`, `contextNote`, `originDate` (allowed in both statuses). Omitted fields stay; `""` clears notes, context and origin date. Requires `If-Match: "<version>"`. | 200 `FileDetail` + `ETag` | 400, 404, 412 `VERSION_CONFLICT`, 428 `PRECONDITION_REQUIRED` |
+| `PUT /files/{id}/favorite` | B | M3 | Body `{ "favorite": true }`. Idempotent; no `If-Match` needed. | 200 `FileDetail` | 400, 404 |
 | `PUT /files/{id}/tags` | B | M3 | Replace the tag set (creates unknown tags). Body `{ "tags": ["name", …] }` (≤ 20). | 200 `FileDetail` | 400, 404 |
 | `POST /files/{id}/discard` | B | M5 | `ARCHIVED → DISCARDED`. | 200 `FileDetail` | 404, 409 `INVALID_STATE_TRANSITION` |
 | `POST /files/{id}/restore` | B | M5 | `DISCARDED → ARCHIVED`. | 200 `FileDetail` | 404, 409 |
@@ -79,7 +80,7 @@ Auth column: **P** public · **B** bearer · **T** ticket · **A** bearer + `ADM
 |---|---|---|---|---|
 | `GET /tags` | B | M3 | All tags with file counts. | 200 `TagSummary[]` |
 | `POST /tags` | B | M3 | Create (`name`, optional `color`). | 201 `TagSummary` |
-| `PATCH /tags/{id}` | B | M3 | Rename / recolor. | 200 `TagSummary` |
+| `PATCH /tags/{id}` | B | M3 | Rename / recolor; omitted fields stay, `"color": ""` clears the color. 409 `TAG_ALREADY_EXISTS` on a name clash. | 200 `TagSummary` |
 | `DELETE /tags/{id}` | B | M3 | Delete (detaches from files). | 204 |
 | `POST /tags/{id}/merge` | B | M3 | Body `{ "targetTagId": "…" }`; moves associations, deletes source. | 200 `TagSummary` |
 | `GET /collections` | B | M3 | List with file counts. | 200 `CollectionSummary[]` |
@@ -209,6 +210,8 @@ paths, or secrets.
 | `DUPLICATE_FILE` | 409 | Same SHA-256 already archived. |
 | `INVALID_STATE_TRANSITION` | 409 | e.g., purge of an `ARCHIVED` file; discard of an already `DISCARDED` file. |
 | `VERSION_CONFLICT` | 412 | `If-Match` does not match current version. |
+| `PRECONDITION_REQUIRED` | 428 | An edit was sent without `If-Match`. |
+| `TAG_ALREADY_EXISTS` | 409 | A tag with this name (case-insensitive) already exists. |
 | `FILE_TOO_LARGE` | 413 | Over the size limit. |
 | `QUOTA_EXCEEDED` | 413 | Would exceed the user's quota. |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | Blocked by policy/denylist, or preview not available for the type. |
@@ -220,8 +223,9 @@ paths, or secrets.
 
 Request and response DTOs are immutable Java records; entities are never serialized. Representative
 shapes (full schemas live in the OpenAPI snapshot). Example values are fictional. Fields are added in the
-milestone that implements them: `tags`, `collections`, `previewable` and `extractionStatus` are not part
-of the M2 responses yet, and the upload metadata accepts `tags`/`collectionIds` only from M3.
+milestone that implements them: `tags` and `favorite` are live since M3a; `collections`, `previewable`
+and `extractionStatus` are not part of the responses yet. Upload metadata accepts `tags` (M3a);
+`collectionIds` arrives with M3b. `GET /files` accepts `favorite=true|false` since M3a.
 
 ```jsonc
 // RegisterRequest
