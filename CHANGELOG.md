@@ -27,5 +27,7 @@ First release of Trash Bin — Stores Your Trash. A private archive for files yo
 - Backup, restore and whole-archive integrity scripts; operator password recovery.
 - Accessibility: WCAG 2.1 AA checks on all core screens, keyboard-only use, works at 360 px.
 
-**Known before tagging:** Spring Framework 6.2 / Spring Security 6.5 advisories pending the Spring Boot
-version decision; license not yet chosen. See [docs/VERIFICATION.md](docs/VERIFICATION.md).
+**Platform:** backend on Spring Boot 4.1 (Spring Framework 7, Spring Security 7, Hibernate 7, Jackson 3);
+no known high or critical dependency advisories ([ADR-002](docs/DECISIONS/ADR-002-spring-boot-4.md)).
+
+**Before tagging:** choose a license. Evidence: [docs/VERIFICATION.md](docs/VERIFICATION.md).

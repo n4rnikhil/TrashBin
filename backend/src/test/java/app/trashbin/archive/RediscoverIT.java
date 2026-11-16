@@ -9,8 +9,6 @@ import app.trashbin.support.FileFixtures;
 import app.trashbin.support.MutableClock;
 import app.trashbin.support.TestClockConfig;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -19,12 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /** "On this day", "forgotten" and "surprise me" (FR-M1 – FR-M3). */
 @SpringBootTest
@@ -123,7 +123,7 @@ class RediscoverIT {
                                 .getResponse()
                                 .getContentAsString());
         List<String> ids = new ArrayList<>();
-        list.forEach(f -> ids.add(f.get("id").asText()));
+        list.forEach(f -> ids.add(f.get("id").asString()));
         return ids;
     }
 }

@@ -3,11 +3,11 @@ package app.trashbin.support;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 /** Shared helpers for integration tests: database reset and signed-in test accounts. */
 public final class TestData {
@@ -51,7 +51,7 @@ public final class TestData {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        return "Bearer " + json.readTree(body).get("accessToken").asText();
+        return "Bearer " + json.readTree(body).get("accessToken").asString();
     }
 
     /** Signs in an existing test account again (e.g. after moving the test clock forward). */
@@ -71,6 +71,6 @@ public final class TestData {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        return "Bearer " + json.readTree(body).get("accessToken").asText();
+        return "Bearer " + json.readTree(body).get("accessToken").asString();
     }
 }

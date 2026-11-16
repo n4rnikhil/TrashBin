@@ -39,7 +39,7 @@ In addition to each milestone's own list, **every** milestone requires:
 **Goal:** a working skeleton on Windows with all engineering rails in place and the main technical risks de-risked. No business features.
 
 **Scope**
-- `backend/` Maven project (Java 21, Spring Boot 3.x), Maven Wrapper, Spotless, `-Xlint:all -Werror`, JaCoCo
+- `backend/` Maven project (Java 21, Spring Boot 3.x — moved to 4.x in M6, ADR-002), Maven Wrapper, Spotless, `-Xlint:all -Werror`, JaCoCo
 - `frontend/` Next.js (App Router, strict TS), Tailwind, shadcn/ui, Lucide, ESLint, Prettier, Vitest, Playwright config
 - Profiles `dev`/`test`/`prod`; typed `@ConfigurationProperties`; startup validation of required config
 - `.env.example` files for backend and frontend; `.env` loading verified
@@ -62,7 +62,7 @@ In addition to each milestone's own list, **every** milestone requires:
 - [ ] ArchUnit, Spotless and compiler-warning gates are active and failing correctly when violated
 - [ ] OpenAPI snapshot test and TypeScript type generation work end to end
 - [ ] Spike results (upload through proxy, forwarded headers) recorded; any needed change to the architecture is in an ADR
-- [ ] Spring Boot version decision recorded (ADR-002); admin bootstrap/recovery recorded (ADR-003)
+- [x] Spring Boot version decision recorded (ADR-002); admin bootstrap/recovery recorded (ADR-003)
 - [ ] CI-less local scripts documented in README; `.gitattributes`/line-ending policy decided and applied
 
 ---
@@ -185,11 +185,11 @@ Delivered in two parts: **M4a** (signed download/preview links, Range support, p
 
 ## M6 — Hardening and release
 
-**Status: done except one release blocker.** Evidence: [VERIFICATION.md](VERIFICATION.md); operations:
-[OPERATIONS.md](OPERATIONS.md). Delivered: Playwright E2E (journey, auth, CSP, keyboard, axe at 1280/360 px),
-per-request nonce CSP, accessibility fixes, `prod` profile test, dependency patches, backup/restore scripts
-and drill, operator password recovery (ADR-003). **Open before tagging v1.0.0:** the Spring Boot version
-decision (ADR-001 §6 item 1 → ADR-002) and the project license (item 6); PDF preview check in Edge/Firefox.
+**Status: done.** Evidence: [VERIFICATION.md](VERIFICATION.md); operations: [OPERATIONS.md](OPERATIONS.md).
+Delivered: Playwright E2E (journey, auth, CSP, keyboard, axe at 1280/360 px), per-request nonce CSP,
+accessibility fixes, `prod` profile test, backup/restore scripts and drill, operator password recovery
+(ADR-003), and the move to Spring Boot 4.1 that cleared all high/critical advisories (ADR-002).
+**Open before tagging v1.0.0:** the project license (ADR-001 §6 item 6); PDF preview check in Edge/Firefox.
 
 **Goal:** make v1 trustworthy and operable.
 

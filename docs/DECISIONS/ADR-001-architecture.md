@@ -12,7 +12,7 @@
 
 Trash Bin is a web-only archive/memory application for individual users, developed and run locally on
 Windows with no cloud hosting and no paid services. The stack is fixed by the brief: Next.js, React,
-strict TypeScript, Tailwind, shadcn/ui; Java 21, Spring Boot 3.x; PostgreSQL with Flyway; Apache Tika; local
+strict TypeScript, Tailwind, shadcn/ui; Java 21, Spring Boot 3.x (4.x since ADR-002); PostgreSQL with Flyway; Apache Tika; local
 filesystem storage. The application stores user files that may be sensitive, so security and data
 durability dominate the design. Scale is small (a handful of users, ≤ 100k files), which favors
 simplicity over distribution.
@@ -124,7 +124,7 @@ Integration tests run against a real PostgreSQL: a dedicated local `trashbin_tes
 | D2 | Single-user ownership in v1; workspace deferred | AD-5 |
 | D3 | No email flows (verification, reset) in v1 | PROJECT_REQUIREMENTS §7–8 |
 | D4 | Accept any file type with signature checks; non-previewable types attachment-only; denylist empty by default; scanner hook only | SECURITY_GUIDELINES §5, §7 |
-| D5 | Spring Boot 3.x — version support to be verified in M0 | §6 Open items |
+| D5 | Spring Boot 3.x — **superseded by ADR-002: Spring Boot 4.1** | [ADR-002](ADR-002-spring-boot-4.md) |
 | D6 | Native PostgreSQL for dev/tests; Testcontainers optional | AD-12 |
 | D7 | BCrypt cost 12 | AD-4 |
 | D8 | Maven | AD-11 |
@@ -152,7 +152,7 @@ These adjust the approved plan and are reflected consistently in all documents:
 
 | # | Item | Needed by | Proposed resolution |
 |---|---|---|---|
-| 1 | **Spring Boot version.** Pinned to **3.5.16** in M0. **Re-checked in M6 (2026-11-16):** 3.5.16 is the last 3.5 release on Maven Central and Spring Framework 6.2.19 the last open-source 6.2; the M6 dependency-check reports critical/high CVEs in Spring Framework 6.2.19 and Spring Security 6.5.11 whose fixes ship only in Spring Framework 7 / Spring Boot 4 (or commercial 6.2.20+). Non-Spring libraries were patched by version overrides in `pom.xml`. | **before v1.0** | **Owner decision pending:** migrate to Spring Boot 4.x (changes the brief's "Spring Boot 3.x") or ship v1 on 3.5.16 with the findings triaged as an accepted risk. Record the outcome as ADR-002. |
+| 1 | **Spring Boot version.** Pinned to **3.5.16** in M0. **Re-checked in M6 (2026-11-16):** 3.5.16 is the last 3.5 release on Maven Central and Spring Framework 6.2.19 the last open-source 6.2; the M6 dependency-check reports critical/high CVEs in Spring Framework 6.2.19 and Spring Security 6.5.11 whose fixes ship only in Spring Framework 7 / Spring Boot 4 (or commercial 6.2.20+). Non-Spring libraries were patched by version overrides in `pom.xml`. | Done | **Resolved by [ADR-002](ADR-002-spring-boot-4.md):** migrated to Spring Boot 4.1; re-scan shows no high/critical findings. |
 | 2 | **Admin bootstrap and password recovery.** **Resolved:** bootstrap in M1; recovery in M6 as an operator command — see [ADR-003](ADR-003-account-recovery.md). | Done | — |
 | 3 | **PDF preview strategy.** **Resolved in M4:** browser-native viewer in a same-origin `<iframe>`; PDF responses carry `frame-ancestors 'self'` (no `sandbox`, which would disable the viewer), `nosniff` and `application/pdf`. No viewer dependency added. Automated checks run in Chromium only; Edge/Firefox are a manual check ([VERIFICATION](../VERIFICATION.md)). | Done | — |
 | 4 | **Upload via Next proxy.** **Resolved in M2:** the rewrite proxy truncates bodies over 10 MB, so `/api/v1/files` uses a streaming route handler instead; single origin kept (AD-2 unchanged). | Done | — |

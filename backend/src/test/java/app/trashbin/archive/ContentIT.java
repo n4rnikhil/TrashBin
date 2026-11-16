@@ -13,7 +13,6 @@ import app.trashbin.support.FileFixtures;
 import app.trashbin.support.MutableClock;
 import app.trashbin.support.TestClockConfig;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -21,8 +20,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,6 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import tools.jackson.databind.ObjectMapper;
 
 /** Download and preview through signed links (docs/SECURITY_GUIDELINES.md section 7). */
 @SpringBootTest
@@ -218,7 +218,7 @@ class ContentIT {
                         .andReturn();
         return json.readTree(result.getResponse().getContentAsString(StandardCharsets.UTF_8))
                 .get("id")
-                .asText();
+                .asString();
     }
 
     private ResultActions ticket(String id, String purpose) throws Exception {
@@ -237,6 +237,6 @@ class ContentIT {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        return json.readTree(body).get("url").asText();
+        return json.readTree(body).get("url").asString();
     }
 }

@@ -240,7 +240,7 @@ Complete before declaring v1 (milestone M6) and re-run for each release. Evidenc
 - [x] Upload tests: oversize stream, signature mismatch, traversal-style filenames, duplicate, quota, DB-failure compensation
 - [x] Content headers verified: nosniff, no-store, CSP, `Content-Disposition` injection attempts
 - [x] No `localStorage`/`sessionStorage` token usage (grep + review)
-- [ ] `npm audit` and Maven dependency-check reviewed; no unresolved high/critical findings — **open for v1.0:** Spring Framework 6.2.19 / Spring Security 6.5.11 (ADR-001 §6 item 1); everything else resolved
+- [x] `npm audit` and Maven dependency-check reviewed; no unresolved high/critical findings (Spring advisories resolved by the Spring Boot 4.1 move, ADR-002)
 - [x] Actuator and Swagger unreachable in `prod` profile (tested)
 - [x] Logs reviewed: no tokens, passwords, filenames, or file contents
 - [x] Security headers verified on app pages and content responses

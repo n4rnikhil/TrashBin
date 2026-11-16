@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import app.trashbin.support.ApiClient;
 import app.trashbin.support.FileFixtures;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -22,12 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /** Full-text search, fuzzy file-name matching, filters and index upkeep. */
 @SpringBootTest
@@ -207,7 +207,7 @@ class FileSearchIT {
                                 .getResponse()
                                 .getContentAsString());
         List<String> ids = new ArrayList<>();
-        page.get("content").forEach(f -> ids.add(f.get("id").asText()));
+        page.get("content").forEach(f -> ids.add(f.get("id").asString()));
         return ids;
     }
 

@@ -140,7 +140,7 @@ Priority: **M** must, **S** should, **C** could. Each requirement lists its mile
 
 ## 6. Constraints
 
-- Fixed stack: Next.js, React, strict TypeScript, Tailwind, shadcn/ui, Lucide; Java 21, Spring Boot 3.x,
+- Fixed stack: Next.js, React, strict TypeScript, Tailwind, shadcn/ui, Lucide; Java 21, Spring Boot 4.x (was 3.x; see ADR-002),
   PostgreSQL, Flyway, Apache Tika. See [ADR-001](DECISIONS/ADR-001-architecture.md).
 - Local Windows development; no cloud hosting; no paid infrastructure or APIs.
 - No unnecessary microservices, Docker requirements, or dependencies.

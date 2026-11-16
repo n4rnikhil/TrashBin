@@ -1,4 +1,4 @@
-﻿# Trash Bin — Stores Your Trash
+# Trash Bin — Stores Your Trash
 
 > *Nothing is truly trash until you decide it is.*
 
@@ -10,8 +10,7 @@ tags and context, so you can search, preview, download, restore and rediscover t
 checks), the archive, file details, tags, collections, favorites, metadata editing, full-text search
 (including text inside PDF, Office and text files), download, inline preview, discard / restore /
 permanent delete (auto-purge after 30 days), integrity check, activity timeline, Rediscover and
-dashboard stats work end to end. M6 (hardening and release) is complete apart from the Spring Boot
-version decision and the license choice that gate the v1.0.0 tag. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
+dashboard stats work end to end. M6 (hardening and release) is complete; only the license choice remains before the v1.0.0 tag. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 
 ---
 
@@ -33,7 +32,7 @@ Out of scope for v1: sharing/teams, AI/OCR, email flows, file versioning, mobile
 | Layer | Choice |
 |---|---|
 | Frontend | Next.js (App Router), React, TypeScript (strict), Tailwind CSS, shadcn/ui, Lucide |
-| Backend | Java 21, Spring Boot 3.5.16, Spring Web / Security / Data JPA, Hibernate, Bean Validation, Actuator |
+| Backend | Java 21, Spring Boot 4.1 (Spring Framework 7), Spring Web MVC / Security 7 / Data JPA, Hibernate 7, Jackson 3, Bean Validation, Actuator |
 | Database | PostgreSQL 16+, Flyway, UUID identifiers |
 | Binary storage | Local filesystem behind a `BlobStore` port |
 | Content | Apache Tika (type detection, text extraction), SHA-256 |
@@ -157,7 +156,7 @@ cd frontend; npm run api:types
 | [docs/SECURITY_GUIDELINES.md](docs/SECURITY_GUIDELINES.md) | Auth design, authorization rules, threat model |
 | [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) | Backend and frontend standards, testing expectations |
 | [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md) | Milestones M0–M6 with definition of done |
-| [docs/DECISIONS/](docs/DECISIONS/) | Architecture decision records (ADR-001 architecture, ADR-003 account recovery) |
+| [docs/DECISIONS/](docs/DECISIONS/) | Architecture decision records (ADR-001 architecture, ADR-002 Spring Boot 4, ADR-003 account recovery) |
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Run, back up, restore, recover accounts, rotate secrets |
 | [docs/VERIFICATION.md](docs/VERIFICATION.md) | v1 test and release evidence |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes |

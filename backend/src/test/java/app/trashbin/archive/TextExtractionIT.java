@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import app.trashbin.archive.service.TextExtractionService;
 import app.trashbin.support.FileFixtures;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -26,12 +24,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /** Text extraction (FR-F5) and searching inside file contents. */
 @SpringBootTest
@@ -144,7 +144,7 @@ class TextExtractionIT {
                         .andReturn()
                         .getResponse()
                         .getContentAsString(StandardCharsets.UTF_8);
-        return json.readTree(body).get("id").asText();
+        return json.readTree(body).get("id").asString();
     }
 
     private String extractionStatus(String id) {
@@ -162,7 +162,7 @@ class TextExtractionIT {
                                 .getResponse()
                                 .getContentAsString());
         List<String> ids = new ArrayList<>();
-        page.get("content").forEach(f -> ids.add(f.get("id").asText()));
+        page.get("content").forEach(f -> ids.add(f.get("id").asString()));
         return ids;
     }
 

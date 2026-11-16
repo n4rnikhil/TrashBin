@@ -5,13 +5,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /** Small helpers that keep integration tests focused on behavior rather than request plumbing. */
 public record ApiClient(MockMvc mockMvc, ObjectMapper json) {
@@ -38,7 +38,7 @@ public record ApiClient(MockMvc mockMvc, ObjectMapper json) {
                         .getResponse()
                         .getContentAsString())
                 .get("id")
-                .asText();
+                .asString();
     }
 
     public String createCollection(String bearer, String name) throws Exception {
@@ -52,7 +52,7 @@ public record ApiClient(MockMvc mockMvc, ObjectMapper json) {
                         .getResponse()
                         .getContentAsString())
                 .get("id")
-                .asText();
+                .asString();
     }
 
     public void putJson(String bearer, String url, Map<String, ?> body) throws Exception {

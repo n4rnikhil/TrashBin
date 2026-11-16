@@ -27,7 +27,7 @@
 
 ## Part B — Backend standards
 
-*Java 21, Spring Boot 3.x, Spring Data JPA, PostgreSQL.*
+*Java 21, Spring Boot 4.x (Spring Framework 7, Jackson 3 `tools.jackson.*`, JSpecify `@Nullable`), Spring Data JPA, PostgreSQL.*
 
 ### B.1 Language and style
 

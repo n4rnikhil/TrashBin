@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.trashbin.support.FileFixtures;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,14 +26,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import tools.jackson.databind.ObjectMapper;
 
 /** Upload pipeline and archive reads against the real database and a temp storage root. */
 @SpringBootTest
@@ -143,7 +143,7 @@ class FileUploadIT {
         long stagingBefore = countFiles(storageRoot.resolve("staging"));
 
         upload(alice, "report.pdf", text("I am not a PDF"), null)
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.code").value("FILE_SIGNATURE_MISMATCH"));
 
         assertThat(rowCount()).isZero();
@@ -170,7 +170,7 @@ class FileUploadIT {
     @Test
     void filesOverTheSizeLimitAreRejected() throws Exception {
         upload(alice, "big.bin", filled(1024 * 1024 + 1, (byte) 1), null)
-                .andExpect(status().isPayloadTooLarge())
+                .andExpect(status().isContentTooLarge())
                 .andExpect(jsonPath("$.code").value("FILE_TOO_LARGE"));
         assertThat(countFiles(storageRoot.resolve("blobs"))).isZero();
     }
@@ -183,7 +183,7 @@ class FileUploadIT {
         }
 
         upload(alice, "part4.bin", filled(900 * 1024, (byte) 4), null)
-                .andExpect(status().isPayloadTooLarge())
+                .andExpect(status().isContentTooLarge())
                 .andExpect(jsonPath("$.code").value("QUOTA_EXCEEDED"));
         assertThat(countFiles(storageRoot.resolve("blobs"))).isEqualTo(3);
     }
@@ -279,7 +279,7 @@ class FileUploadIT {
     private String id(ResultActions result) throws Exception {
         return json.readTree(result.andReturn().getResponse().getContentAsString())
                 .get("id")
-                .asText();
+                .asString();
     }
 
     private long rowCount() {

@@ -1,7 +1,7 @@
 package app.trashbin.config;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.lang.Nullable;
 
 /**
  * Input for the one-shot password recovery command ({@code recovery} profile, ADR-003). Bound only

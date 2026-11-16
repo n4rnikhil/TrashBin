@@ -1,6 +1,5 @@
 package app.trashbin.common.error;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.MediaType;
@@ -8,6 +7,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Writes problem+json for errors raised inside the security filter chain, where the MVC exception

@@ -23,10 +23,10 @@ public enum ErrorCode {
     COLLECTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "Collection already exists"),
     VERSION_CONFLICT(HttpStatus.PRECONDITION_FAILED, "Version conflict"),
     PRECONDITION_REQUIRED(HttpStatus.PRECONDITION_REQUIRED, "Precondition required"),
-    FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "File too large"),
-    QUOTA_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "Storage quota exceeded"),
+    FILE_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE, "File too large"),
+    QUOTA_EXCEEDED(HttpStatus.CONTENT_TOO_LARGE, "Storage quota exceeded"),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported file type"),
-    FILE_SIGNATURE_MISMATCH(HttpStatus.UNPROCESSABLE_ENTITY, "File content does not match"),
+    FILE_SIGNATURE_MISMATCH(HttpStatus.UNPROCESSABLE_CONTENT, "File content does not match"),
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "Too many requests"),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error");
 

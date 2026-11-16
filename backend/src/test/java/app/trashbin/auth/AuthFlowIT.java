@@ -11,16 +11,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import app.trashbin.support.MutableClock;
 import app.trashbin.support.TestClockConfig;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import java.time.Duration;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +26,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /** End-to-end authentication behavior against the real database (docs/SECURITY_GUIDELINES.md 3). */
 @SpringBootTest
@@ -124,7 +124,7 @@ class AuthFlowIT {
                         .getContentAsString();
 
         assertThat(stripTrace(wrong)).isEqualTo(stripTrace(unknown));
-        assertThat(json.readTree(wrong).get("code").asText()).isEqualTo("INVALID_CREDENTIALS");
+        assertThat(json.readTree(wrong).get("code").asString()).isEqualTo("INVALID_CREDENTIALS");
     }
 
     @Test
@@ -284,7 +284,7 @@ class AuthFlowIT {
                         .andExpect(jsonPath("$.length()").value(1))
                         .andReturn();
         String mySessionId =
-                json.readTree(list.getResponse().getContentAsString()).get(0).get("id").asText();
+                json.readTree(list.getResponse().getContentAsString()).get(0).get("id").asString();
 
         // Another user cannot revoke my session: it does not exist for them.
         mockMvc.perform(
@@ -379,12 +379,12 @@ class AuthFlowIT {
     private Session session(MvcResult result) throws Exception {
         JsonNode body = json.readTree(result.getResponse().getContentAsString());
         return new Session(
-                body.get("accessToken").asText(),
+                body.get("accessToken").asString(),
                 result.getResponse().getCookie(COOKIE).getValue());
     }
 
     private String bearer(JsonNode body) {
-        return "Bearer " + body.get("accessToken").asText();
+        return "Bearer " + body.get("accessToken").asString();
     }
 
     private org.springframework.test.web.servlet.ResultActions register(
@@ -427,8 +427,8 @@ class AuthFlowIT {
     }
 
     private String stripTrace(String problemJson) throws Exception {
-        com.fasterxml.jackson.databind.node.ObjectNode node =
-                (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(problemJson);
+        tools.jackson.databind.node.ObjectNode node =
+                (tools.jackson.databind.node.ObjectNode) json.readTree(problemJson);
         node.remove("traceId");
         return node.toString();
     }

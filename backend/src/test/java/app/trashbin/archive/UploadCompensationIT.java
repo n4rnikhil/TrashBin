@@ -10,19 +10,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import app.trashbin.activity.service.ActivityService;
 import app.trashbin.support.FileFixtures;
 import app.trashbin.support.TestData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 /** A database failure after the blob was stored must leave neither a row nor a blob behind. */
 @SpringBootTest

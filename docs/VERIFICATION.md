@@ -1,7 +1,7 @@
 # v1 verification record
 
 Evidence for the M6 definition of done ([DEVELOPMENT_ROADMAP](DEVELOPMENT_ROADMAP.md#m6--hardening-and-release)).
-Recorded 2026-11-16 on Windows 11, Chromium (Playwright 1.65), PostgreSQL 17, JDK 21.
+Recorded 2026-11-16 on Windows 11, Chromium (Playwright 1.65), PostgreSQL 17, JDK 21, Spring Boot 4.1.2.
 
 ## Must-have requirements
 
@@ -42,7 +42,8 @@ Ownership: every owned endpoint has cross-user 404 tests in its `*IT` class.
 | `prod` profile | `ProdProfileIT` + jar smoke run: API docs/Swagger 404, actuator `env` 401 (404 even for admins), JSON logs, `Secure` cookie, HSTS on HTTPS only, no secrets in logs |
 | Backup → wipe → restore | executed; see [OPERATIONS §3](OPERATIONS.md#3-restore) |
 | `npm audit --omit=dev` | 0 vulnerabilities (12 low/moderate in dev-only tooling via the `shadcn` CLI) |
-| OWASP dependency-check (backend) | Tomcat, PostgreSQL driver, log4j-api, Jackson, commons-lang3, Hibernate Validator patched by version overrides. **Open:** Spring Framework 6.2.19 / Spring Security 6.5.11 findings — fixes exist only in Spring Boot 4 (see ADR-001 §6 item 1). |
+| OWASP dependency-check (backend) | First run on Spring Boot 3.5.16: 23 critical / 24 high (Spring Framework 6.2.19, Spring Security 6.5.11, Tomcat, PostgreSQL driver, …). After the move to **Spring Boot 4.1.2** ([ADR-002](DECISIONS/ADR-002-spring-boot-4.md)): **0 critical, 0 high**; 2 medium, both false positives by name match — `angus-activation` matched to a Jakarta *Mail* advisory, `hibernate-validator` matched to validator.nu (Nu Html Checker). |
+| Spring Boot 4 migration | Same suite re-run on 4.1.2: 49 unit + 105 integration tests, OpenAPI snapshot unchanged (no API change), `prod` jar smoke and recovery command re-checked, E2E 8/8 on a fresh database. |
 | Recovery command | `AccountRecoveryIT` + jar run (exit 0 on success, 1 on unknown account / weak password, password never logged) |
 
 ## Not verified
