@@ -11,6 +11,7 @@ import app.trashbin.config.AuthProperties;
 import app.trashbin.user.dto.UserProfile;
 import app.trashbin.user.service.UserService;
 import java.time.Instant;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +77,17 @@ public class AuthService {
     public void changePassword(AuthenticatedUser caller, String current, String replacement) {
         users.changePassword(caller, current, replacement);
         refreshTokens.revokeAll(caller.id());
+    }
+
+    /**
+     * Forgotten-password recovery run by the operator (ADR-003): new password, lockout cleared, and
+     * every session ended so whoever might hold the old credentials is signed out.
+     */
+    @Transactional
+    public UUID recoverAccount(String email, String replacement) {
+        UUID userId = users.resetPassword(email, replacement);
+        refreshTokens.revokeAll(userId);
+        return userId;
     }
 
     private AuthResult result(UserProfile user, IssuedToken refresh) {

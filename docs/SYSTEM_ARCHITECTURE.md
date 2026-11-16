@@ -222,7 +222,10 @@ uses a `pg_trgm` index. Details in [DATABASE_DESIGN §6](DATABASE_DESIGN.md#6-se
 |---|---|---|
 | `dev` | Day-to-day development | Swagger UI on; readable logs; `TRASHBIN_COOKIE_SECURE=false` allowed. |
 | `test` | Automated tests | Isolated DB and temp storage dir; deterministic clock where needed. |
-| `prod` | Hardened local run | Swagger off; JSON logs; actuator restricted; cookie `Secure`; HSTS when served over HTTPS. |
+| `prod` | Hardened local run | Swagger off; JSON (ECS) logs; actuator restricted; cookie `Secure`; HSTS when served over HTTPS. Verified by `ProdProfileIT`. |
+| `recovery` | One-shot operator command | No web server; resets one account's password, revokes its sessions, exits ([ADR-003](DECISIONS/ADR-003-account-recovery.md), `scripts/reset-password.ps1`). |
+
+Operations (backup/restore, storage check, secret rotation, jobs): [OPERATIONS.md](OPERATIONS.md).
 
 ## 9. Configuration reference
 
@@ -234,7 +237,7 @@ references each variable explicitly (`${TRASHBIN_...}`). Real environment variab
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `SPRING_PROFILES_ACTIVE` | no | `dev` | `dev`, `test` or `prod`. |
+| `SPRING_PROFILES_ACTIVE` | no | `dev` | `dev`, `test`, `prod` or `recovery`. |
 | `TRASHBIN_DB_URL` | yes | – | JDBC URL, e.g. `jdbc:postgresql://localhost:5432/trashbin_db`. |
 | `TRASHBIN_DB_USERNAME` | yes | – | Database role. |
 | `TRASHBIN_DB_PASSWORD` | yes | – | Database password. |
@@ -258,6 +261,7 @@ references each variable explicitly (`${TRASHBIN_...}`). Real environment variab
 | `TRASHBIN_EXTRACTION_MAX_INPUT_MB` | no | `50` | Larger files are not parsed (`SKIPPED`). |
 | `TRASHBIN_EXTRACTION_MAX_CHARS` | no | `1000000` | Stored text cap. |
 | `TRASHBIN_EXTRACTION_TIMEOUT` | no | `PT30S` | Per-file parse timeout. |
+| `TRASHBIN_RECOVERY_EMAIL` / `TRASHBIN_RECOVERY_PASSWORD` | `recovery` profile only | – | Account and new password for the recovery command; set by `scripts/reset-password.ps1`, never stored. |
 
 ### Frontend (`frontend/.env.local`)
 

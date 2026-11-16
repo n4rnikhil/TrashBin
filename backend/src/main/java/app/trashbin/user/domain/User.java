@@ -91,6 +91,14 @@ public class User {
         this.updatedAt = now;
     }
 
+    /** Operator-driven reset (forgotten password): new hash and any lockout cleared. */
+    public void resetPassword(String newPasswordHash, Instant now) {
+        this.passwordHash = newPasswordHash;
+        this.failedLoginCount = 0;
+        this.lockedUntil = null;
+        this.updatedAt = now;
+    }
+
     public void rename(String newDisplayName, Instant now) {
         this.displayName = newDisplayName;
         this.updatedAt = now;

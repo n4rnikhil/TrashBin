@@ -38,6 +38,7 @@ const SCREENS: [name: string, path: string][] = [
 
 for (const width of [1280, 360]) {
   test(`core screens: axe clean and no sideways scroll at ${width}px`, async ({ page }) => {
+    test.setTimeout(180_000); // eleven screens, each analysed by axe
     await page.setViewportSize({ width, height: 800 });
 
     for (const path of ["/login", "/register"]) {
@@ -76,7 +77,13 @@ async function openScreen(page: Page, name: string, path: string, width: number)
     await page.getByRole("button", { name: "Toggle Sidebar" }).click();
   }
   await navigate(page, name, path);
-  if (width < 768) await page.keyboard.press("Escape");
+  if (width < 768) {
+    // The sheet may already be closing after navigation; wait until it is fully gone so axe
+    // never measures text mid-fade.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await page.waitForTimeout(400);
+  }
 }
 
 async function uploadTextMobile(page: Page) {

@@ -153,3 +153,6 @@ graphify-out/
 *.bak
 *.orig
 *.rej
+
+# Local backups made by scripts/backup.ps1 (contain user data)
+/backups/

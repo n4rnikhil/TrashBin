@@ -26,6 +26,14 @@
         <spotless.version>2.46.1</spotless.version>
         <google-java-format.version>1.28.0</google-java-format.version>
         <jacoco.version>0.8.16</jacoco.version>
+        <!-- Security patch overrides of Boot-managed versions (same lines, patch/minor only),
+             from the M6 dependency-check run. Drop each once the Boot BOM catches up. -->
+        <tomcat.version>10.1.62</tomcat.version>
+        <postgresql.version>42.7.14</postgresql.version>
+        <jackson-bom.version>2.21.8</jackson-bom.version>
+        <log4j2.version>2.26.1</log4j2.version>
+        <commons-lang3.version>3.22.0</commons-lang3.version>
+        <hibernate-validator.version>8.0.6.Final</hibernate-validator.version>
     </properties>
 
     <dependencies>

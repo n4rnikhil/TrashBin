@@ -10,7 +10,8 @@ tags and context, so you can search, preview, download, restore and rediscover t
 checks), the archive, file details, tags, collections, favorites, metadata editing, full-text search
 (including text inside PDF, Office and text files), download, inline preview, discard / restore /
 permanent delete (auto-purge after 30 days), integrity check, activity timeline, Rediscover and
-dashboard stats work end to end. M6 (hardening and release) is next. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
+dashboard stats work end to end. M6 (hardening and release) is complete apart from the Spring Boot
+version decision and the license choice that gate the v1.0.0 tag. Progress is tracked against the milestones in [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 
 ---
 
@@ -130,6 +131,14 @@ cd backend;  .\mvnw.cmd verify                        # unit + integration tests
 cd frontend; npm run lint; npm run typecheck; npm run format:check; npm test; npm run build
 ```
 
+End-to-end (Playwright; starts both apps if they are not already running):
+
+```powershell
+cd frontend; npx playwright install chromium; npm run e2e
+```
+
+Running the hardened build, backups, restores and password recovery: [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
 After an intentional API change, regenerate the contract snapshot and frontend types:
 
 ```powershell
@@ -148,7 +157,10 @@ cd frontend; npm run api:types
 | [docs/SECURITY_GUIDELINES.md](docs/SECURITY_GUIDELINES.md) | Auth design, authorization rules, threat model |
 | [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) | Backend and frontend standards, testing expectations |
 | [docs/DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md) | Milestones M0–M6 with definition of done |
-| [docs/DECISIONS/ADR-001-architecture.md](docs/DECISIONS/ADR-001-architecture.md) | Architecture decision record |
+| [docs/DECISIONS/](docs/DECISIONS/) | Architecture decision records (ADR-001 architecture, ADR-003 account recovery) |
+| [docs/OPERATIONS.md](docs/OPERATIONS.md) | Run, back up, restore, recover accounts, rotate secrets |
+| [docs/VERIFICATION.md](docs/VERIFICATION.md) | v1 test and release evidence |
+| [CHANGELOG.md](CHANGELOG.md) | Release notes |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Branches, commits, PRs, reviews |
 | [CLAUDE.md](CLAUDE.md) | Instructions for AI coding agents |
 

@@ -1,0 +1,11 @@
+# One-shot password recovery (ADR-003): no web server; PasswordRecoveryCommand runs and exits.
+# Use scripts/reset-password.ps1, which prompts for the new password without echoing it.
+spring:
+  main:
+    web-application-type: none
+    banner-mode: off
+
+trashbin:
+  recovery:
+    email: ${TRASHBIN_RECOVERY_EMAIL:}
+    password: ${TRASHBIN_RECOVERY_PASSWORD:}

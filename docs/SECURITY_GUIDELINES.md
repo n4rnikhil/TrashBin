@@ -175,6 +175,11 @@ Rules:
   `base-uri 'self'`), `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`,
   `Permissions-Policy` minimal, HSTS when served over HTTPS. Development may relax script rules for
   hot reload; production may not. Any middleware that sets CSP excludes `/api` routes.
+  **Implemented in M6:** `frontend/src/proxy.ts` sets a fresh 128-bit nonce per page request
+  (`script-src 'self' 'nonce-…' 'strict-dynamic'`; `'unsafe-eval'` in development only), so every
+  page renders dynamically (Cache Components/PPR are off — they cannot carry a nonce). `style-src`
+  allows `'unsafe-inline'` because React and the UI kit set `style` attributes; injected CSS cannot run
+  script. Checked by `csp.test.ts` and the `security-headers` E2E test.
 - React escaping is relied upon; `dangerouslySetInnerHTML` is forbidden. User text (names, notes, tags)
   is rendered as text only.
 
@@ -221,24 +226,26 @@ Log file **ids**, not names. Use parameterized logging; never concatenate user i
 | Duplicate detection reveals a user's *own* file existence | Intended behavior; scoped to the owner. |
 | No malware scanning in v1 | Files are never executed or rendered by the server; downloads are `attachment`; scanner hook provided. |
 | Tika runs in-process | Mitigated by allowlist, caps and timeouts; out-of-process parsing is the documented escalation. |
+| Inline styles allowed by the page CSP | Needed by React `style` props and the UI kit; scripts stay nonce-only. |
+| Operator learns a recovered user's new password | Recovery is an offline operator action (ADR-003); the user changes it after signing in. |
 
 ## 12. Release security checklist
 
-Complete before declaring v1 (milestone M6) and re-run for each release:
+Complete before declaring v1 (milestone M6) and re-run for each release. Evidence for the M6 run: [VERIFICATION.md](VERIFICATION.md).
 
-- [ ] Cross-tenant test suite passes for **every** endpoint
-- [ ] ArchUnit rules pass (no plain `findById` on owned entities; no entities in controllers)
-- [ ] Startup refuses weak/missing/identical secrets (tested)
-- [ ] Refresh rotation, reuse detection, grace window and logout-all tested
-- [ ] Upload tests: oversize stream, signature mismatch, traversal-style filenames, duplicate, quota, DB-failure compensation
-- [ ] Content headers verified: nosniff, no-store, CSP, `Content-Disposition` injection attempts
-- [ ] No `localStorage`/`sessionStorage` token usage (grep + review)
-- [ ] `npm audit` and Maven dependency-check reviewed; no unresolved high/critical findings
-- [ ] Actuator and Swagger unreachable in `prod` profile (tested)
-- [ ] Logs reviewed: no tokens, passwords, filenames, or file contents
-- [ ] Security headers verified on app pages and content responses
-- [ ] Backup and restore procedure executed once successfully
-- [ ] Every item in §11 still accurate
+- [x] Cross-tenant test suite passes for **every** endpoint
+- [x] ArchUnit rules pass (no plain `findById` on owned entities; no entities in controllers)
+- [x] Startup refuses weak/missing/identical secrets (tested)
+- [x] Refresh rotation, reuse detection, grace window and logout-all tested
+- [x] Upload tests: oversize stream, signature mismatch, traversal-style filenames, duplicate, quota, DB-failure compensation
+- [x] Content headers verified: nosniff, no-store, CSP, `Content-Disposition` injection attempts
+- [x] No `localStorage`/`sessionStorage` token usage (grep + review)
+- [ ] `npm audit` and Maven dependency-check reviewed; no unresolved high/critical findings — **open for v1.0:** Spring Framework 6.2.19 / Spring Security 6.5.11 (ADR-001 §6 item 1); everything else resolved
+- [x] Actuator and Swagger unreachable in `prod` profile (tested)
+- [x] Logs reviewed: no tokens, passwords, filenames, or file contents
+- [x] Security headers verified on app pages and content responses
+- [x] Backup and restore procedure executed once successfully
+- [x] Every item in §11 still accurate
 
 ## 13. Reviewer quick checks
 

@@ -134,6 +134,23 @@ public class UserService {
     }
 
     /**
+     * Sets a new password for the account with {@code email} without knowing the old one, and lifts
+     * any lockout. Only reachable from the operator recovery command (ADR-003), never HTTP.
+     *
+     * @return the account id
+     */
+    @Transactional
+    public UUID resetPassword(String email, String replacement) {
+        PasswordPolicy.validate(replacement);
+        User user =
+                users.findByEmail(normalizeEmail(email))
+                        .orElseThrow(ResourceNotFoundException::new);
+        user.resetPassword(passwordEncoder.encode(replacement), Instant.now(clock));
+        log.warn("Password reset by operator for user {}", user.getId());
+        return user.getId();
+    }
+
+    /**
      * Takes a row lock on the account for the rest of the caller's transaction. Used to serialize
      * one user's quota-affecting writes.
      */

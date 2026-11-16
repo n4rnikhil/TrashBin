@@ -3,6 +3,7 @@ package app.trashbin.config;
 import app.trashbin.auth.service.FixedWindowRateLimiter;
 import app.trashbin.auth.web.AuthRateLimitFilter;
 import app.trashbin.common.error.ProblemResponseWriter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,8 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
  * admin-only.
  */
 @Configuration(proxyBeanMethods = false)
+// Not needed (and not buildable) in the web-less recovery command (application-recovery.yml).
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfig {
 
     @Bean

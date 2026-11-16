@@ -112,7 +112,7 @@ Integration tests run against a real PostgreSQL: a dedicated local `trashbin_tes
 - Cookie-authenticated refresh endpoints need extra CSRF controls (SameSite, Origin, custom header).
 - DB/filesystem non-atomicity requires the reconciler and careful operation ordering.
 - Per-IP controls depend on correct trusted-proxy handling behind the Next.js proxy.
-- No self-service password recovery in v1.
+- No self-service password recovery in v1 (operator command instead, ADR-003).
 - In-process Tika is a (bounded) attack surface.
 - Running tests requires a local PostgreSQL installation.
 
@@ -152,9 +152,9 @@ These adjust the approved plan and are reflected consistently in all documents:
 
 | # | Item | Needed by | Proposed resolution |
 |---|---|---|---|
-| 1 | **Spring Boot version.** ~~Confirm 3.x support.~~ **Resolved 2026-11-15:** pinned to **3.5.16**, the newest 3.x published on Maven Central (OSS patch releases are still flowing). The official end-of-support date was not independently confirmed; re-check before v1.0 and plan a move to 4.x if the 3.5 line stops receiving fixes. | M0 | Done. |
-| 2 | **Admin bootstrap and password recovery.** **Bootstrap resolved in M1:** the account registering with `TRASHBIN_BOOTSTRAP_ADMIN_EMAIL` becomes `ADMIN`. **Still open:** recovery for a user who forgot their password (no email in v1). | recovery: before v1.0 | Originally recommended: `TRASHBIN_BOOTSTRAP_ADMIN_EMAIL` promotes the matching registrant; recovery via an admin CLI/profile command that sets a new password and revokes sessions. |
-| 3 | **PDF preview strategy.** **Resolved in M4:** browser-native viewer in a same-origin `<iframe>`; PDF responses carry `frame-ancestors 'self'` (no `sandbox`, which would disable the viewer), `nosniff` and `application/pdf`. No viewer dependency added. Not yet checked visually in every browser (see roadmap M6). | Done | — |
+| 1 | **Spring Boot version.** Pinned to **3.5.16** in M0. **Re-checked in M6 (2026-11-16):** 3.5.16 is the last 3.5 release on Maven Central and Spring Framework 6.2.19 the last open-source 6.2; the M6 dependency-check reports critical/high CVEs in Spring Framework 6.2.19 and Spring Security 6.5.11 whose fixes ship only in Spring Framework 7 / Spring Boot 4 (or commercial 6.2.20+). Non-Spring libraries were patched by version overrides in `pom.xml`. | **before v1.0** | **Owner decision pending:** migrate to Spring Boot 4.x (changes the brief's "Spring Boot 3.x") or ship v1 on 3.5.16 with the findings triaged as an accepted risk. Record the outcome as ADR-002. |
+| 2 | **Admin bootstrap and password recovery.** **Resolved:** bootstrap in M1; recovery in M6 as an operator command — see [ADR-003](ADR-003-account-recovery.md). | Done | — |
+| 3 | **PDF preview strategy.** **Resolved in M4:** browser-native viewer in a same-origin `<iframe>`; PDF responses carry `frame-ancestors 'self'` (no `sandbox`, which would disable the viewer), `nosniff` and `application/pdf`. No viewer dependency added. Automated checks run in Chromium only; Edge/Firefox are a manual check ([VERIFICATION](../VERIFICATION.md)). | Done | — |
 | 4 | **Upload via Next proxy.** **Resolved in M2:** the rewrite proxy truncates bodies over 10 MB, so `/api/v1/files` uses a streaming route handler instead; single origin kept (AD-2 unchanged). | Done | — |
 | 5 | **Line-ending policy file.** **Resolved:** `.gitattributes` added in the M0 review. | Done | — |
 | 6 | **Project license.** | before publishing | Product owner to choose. |

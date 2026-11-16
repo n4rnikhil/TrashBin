@@ -54,6 +54,28 @@ test("archive → find → preview → download → discard → restore → disc
   await expect(page.getByRole("link", { name: /old-lease/ })).toHaveCount(0);
 });
 
+test("a wrong password is refused without revealing why", async ({ page }) => {
+  const email = await register(page, "badlogin");
+  await page.getByRole("button", { name: /Account menu for/ }).click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password").fill("definitely not it");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  // Filtered: Next's route announcer is also an alert region.
+  await expect(
+    page.getByRole("alert").filter({ hasText: "The email or password is incorrect." }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/login$/);
+});
+
+test("a reload keeps the session through the refresh cookie", async ({ page }) => {
+  await register(page, "reload");
+  await page.reload();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+});
+
 test("signing out ends the session", async ({ page }) => {
   await register(page, "signout");
   await page.getByRole("button", { name: /Account menu for/ }).click();

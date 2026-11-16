@@ -1,8 +1,19 @@
-# Hardened local run: no Swagger, no debug logging, Secure cookies unless explicitly overridden.
+# Hardened run: no OpenAPI/Swagger, JSON (ECS) logs, Secure cookies unless explicitly overridden.
+# Verified by ProdProfileIT.
 logging:
+  structured:
+    format:
+      console: ecs
   level:
     root: INFO
     app.trashbin: INFO
+
+# Explicit, so no other active profile can switch the API docs back on.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
 
 trashbin:
   auth:

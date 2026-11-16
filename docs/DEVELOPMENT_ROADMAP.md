@@ -185,6 +185,12 @@ Delivered in two parts: **M4a** (signed download/preview links, Range support, p
 
 ## M6 — Hardening and release
 
+**Status: done except one release blocker.** Evidence: [VERIFICATION.md](VERIFICATION.md); operations:
+[OPERATIONS.md](OPERATIONS.md). Delivered: Playwright E2E (journey, auth, CSP, keyboard, axe at 1280/360 px),
+per-request nonce CSP, accessibility fixes, `prod` profile test, dependency patches, backup/restore scripts
+and drill, operator password recovery (ADR-003). **Open before tagging v1.0.0:** the Spring Boot version
+decision (ADR-001 §6 item 1 → ADR-002) and the project license (item 6); PDF preview check in Edge/Firefox.
+
 **Goal:** make v1 trustworthy and operable.
 
 **Scope**
